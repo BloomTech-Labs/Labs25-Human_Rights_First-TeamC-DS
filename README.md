@@ -1,8 +1,18 @@
 # Labs DS starter
 
+- [Big picture](#big-picture)
+- [Tech stack](#tech-stack)
+- [Getting started](#getting-started)
+- [File structure](#file-structure)
+- [Deploy to AWS](#deploy-to-aws)
+- [Example: Data visualization](#example-data-visualization)
+- [Example: Machine learning](#example-machine-learning)
+
+## Big picture
+
 This template has starter code to deploy an API for your machine learning model and data visualizations.
 
-You can see the [template deployed on AWS](http://labs-ds-starter.eba-ekpya4pr.us-east-1.elasticbeanstalk.com/) as-is.
+You can see the [template deployed on AWS](https://ds.labsscaffolding.dev/) as-is.
 
 This diagram shows two different ways to use Python web frameworks. Both ways are good! The first way is what you learned in DS Unit 3, with Flask. The second way is more common in Build Weeks & Labs. 
 
@@ -43,18 +53,20 @@ Run the Docker image
 docker-compose up
 ```
 
-![image](https://user-images.githubusercontent.com/7278219/87965040-c18ba300-ca80-11ea-894f-d51a69d52f8a.png)
+Go to `localhost:8000` in your browser.
+
+![image](https://user-images.githubusercontent.com/7278219/89348227-cef48000-d671-11ea-90b1-d02cd9af8fbc.png)
 
 You'll see your API documentation:
 
-- Your app's title, "DS API"
-- Your description, "Lorem ipsum"
+- Your app's title
+- Your description
 - An endpoint for POST requests, `/predict`
-- An endpoint for GET requests, `/vis/{statecode}`
+- An endpoint for GET requests, `/viz`
 
 Click the `/predict` endpoint's green button.
 
-![image](https://user-images.githubusercontent.com/7278219/87965845-0532dc80-ca82-11ea-9690-b4c195a648d6.png)
+![image](https://user-images.githubusercontent.com/7278219/89348390-1bd85680-d672-11ea-90f8-26b9e65cbe86.png)
 
 You'll see the endpoint's documentation, including:
 
@@ -83,6 +95,7 @@ You'll see the server response, including:
 
 ```
 project
+├── requirements.txt
 └── app
     ├── __init__.py
     ├── main.py
@@ -96,6 +109,8 @@ project
         ├── test_predict.py
         └── test_viz.py
 ```
+
+`requirements.txt` is where you add Python packages that your app requires. Then run `docker-compose build` to re-build your Docker image.
 
 `app/main.py` is where you edit your app's title and description, which are displayed at the top of the your automatically generated documentation. This file also configures "Cross-Origin Resource Sharing", which you shouldn't need to edit. 
 
@@ -116,7 +131,7 @@ When your API receives a POST request, FastAPI automatically parses and validate
 - [calmcode.io video - FastAPI - Type Validation](https://calmcode.io/fastapi/type-validation.html)
 - [pydantic docs - Validators](https://pydantic-docs.helpmanual.io/usage/validators/)
 
-`app/api/viz.py` defines the **Visualization** endpoint. Currently `/viz/{statecode}` accepts GET requests where `{statecode}` is a 2 character US state postal code, and responds with a Plotly figure of the state's unemployment rate, as a JSON string. Create your own Plotly visualizations in notebooks. Then add your code to this source code file. Your web developer teammates can use [react-plotly.js](https://github.com/Lambda-School-Labs/labs-spa-starter/tree/main/src/components/pages/ExampleDataViz) to show the visualizations.
+`app/api/viz.py` defines the **Visualization** endpoint. Create your own Plotly visualizations in notebooks. Then add your code to this source code file. Your web teammates can use [react-plotly.js](https://github.com/Lambda-School-Labs/labs-spa-starter/tree/main/src/components/pages/ExampleDataViz) to show the visualizations.
 
 ![react-plotly.js animation](https://media.giphy.com/media/j3QG8qVBQcpKvCfO3T/giphy.gif)
 
@@ -161,7 +176,7 @@ docker push YOUR-DOCKER-HUB-ID/YOUR-IMAGE-NAME
 
 Edit the image name in the  `Dockerrun.aws.json` file. Replace the placeholder `YOUR-DOCKER-HUB-ID/YOUR-IMAGE-NAME` with your real values. 
 
-Use the EB CLI:
+Then use the EB CLI:
 ```
 git add --all
 
@@ -175,21 +190,103 @@ eb open
 ```
 
 To redeploy:
+
+- `git commit ...`
+- `docker build ...`
+- `docker push ...`
+- `eb deploy`
+- `eb open`
+
+## Example: Data visualization
+
+Labs projects will use [Plotly](https://plotly.com/python/), a popular visualization library for both Python & JavaScript.
+
+Follow the [getting started](#getting-started) instructions.
+
+Edit `app/main.py` to add your API `title` and `description`.
+
+```python
+app = FastAPI(
+    title='World Metrics DS API',
+    description='Visualize world metrics from Gapminder data',
+    version='0.1',
+    docs_url='/',
+)
 ```
-git add --all
 
-git commit -m "Your commit message"
+Prototype your visualization in a notebook.
 
-eb deploy
+```python
+import plotly.express as px
 
-eb open
+dataframe = px.data.gapminder().rename(columns={
+    'year': 'Year', 
+    'lifeExp': 'Life Expectancy', 
+    'pop': 'Population', 
+    'gdpPercap': 'GDP Per Capita'
+})
+
+country = 'United States'
+metric = 'Population'
+subset = dataframe[dataframe.country == country]
+fig = px.line(subset, x='Year', y=metric, title=f'{metric} in {country}')
+fig.show()
 ```
 
-# Machine learning, step-by-step
+Define a function for your visualization. End with `return fig.to_json()`
 
-Follow the getting started instructions
+Then edit `app/api/viz.py` to add your code.
 
-Edit `app/main.py` to add your API `title` and `description`
+```python
+import plotly.express as px
+
+dataframe = px.data.gapminder().rename(columns={
+    'year': 'Year', 
+    'lifeExp': 'Life Expectancy', 
+    'pop': 'Population', 
+    'gdpPercap': 'GDP Per Capita'
+})
+
+@app.get('/worldviz')
+async def worldviz(metric, country):
+    """
+    Visualize world metrics from Gapminder data
+
+    ### Query Parameters
+    - `metric`: 'Life Expectancy', 'Population', or 'GDP Per Capita'
+    - `country`: [country name](https://www.gapminder.org/data/geo/), case sensitive
+
+    ### Response
+    JSON string to render with react-plotly.js
+    """
+    subset = dataframe[dataframe.country == country]
+    fig = px.line(subset, x='Year', y=metric, title=f'{metric} in {country}')
+    return fig.to_json()
+```
+
+Test locally, then [deploy to AWS](#deploy-to-aws). 
+
+Your web teammates will re-use the [data viz code & docs in our `labs-spa-starter` repo](https://github.com/Lambda-School-Labs/labs-spa-starter/tree/main/src/components/pages/ExampleDataViz). The web app will call the DS API to get the data, then use `react-plotly.js` to render the visualization. 
+
+#### Plotly Python docs
+- [Example gallery](https://plotly.com/python/)
+- [Setting Graph Size](https://plotly.com/python/setting-graph-size/)
+- [Styling Plotly Express Figures](https://plotly.com/python/styling-plotly-express/)
+- [Text and font styling](https://plotly.com/python/v3/font/)
+- [Theming and templates](https://plotly.com/python/templates/)
+
+#### Plotly JavaScript docs
+- [Lambda `labs-spa-starter` data viz code & docs](https://github.com/Lambda-School-Labs/labs-spa-starter/tree/main/src/components/pages/ExampleDataViz)
+- [Example gallery](https://plotly.com/javascript/)
+- [Fundamentals](https://plotly.com/javascript/plotly-fundamentals/)
+- [react-plotly.js](https://plotly.com/javascript/react/)
+
+
+## Example: Machine learning
+
+Follow the [getting started](#getting-started) instructions.
+
+Edit `app/main.py` to add your API `title` and `description`.
 
 ```python
 app = FastAPI(
@@ -250,17 +347,21 @@ class House(BaseModel):
 
 @router.post('/predict')
 async def predict(house: House):
+    """Predict house prices in California."""
+    X_new = house.to_df()
+    y_pred = 200000
+    return {'predicted_price': y_pred}
 ```
 
-Deploy your work-in-progress to AWS. Now your web teammates can make POST requests to your API endpoint.
+Test locally, then [deploy to AWS](#deploy-to-aws) with your work-in-progress. Now your web teammates can make POST requests to your API endpoint.
 
 In a notebook, train your pipeline and pickle it. See these docs:
 
 - [Scikit-learn docs - Model persistence](https://scikit-learn.org/stable/modules/model_persistence.html)
 - [Keras docs - Serialization and saving](https://keras.io/guides/serialization_and_saving/)
 
-Get version numbers for every package you used in your pipeline. Install the exact versions of these packages in your virtual environment.
+Get version numbers for every package you used in your pipeline. Add these packages to your `requirements.txt` file with their exact version numbers. Then run `docker-compose build` to re-build your Docker image.
 
 Edit `app/api/predict.py` to unpickle your model and use it in your predict function. 
 
-Now you are ready to re-deploy!
+Now you are ready to re-deploy! 🚀
