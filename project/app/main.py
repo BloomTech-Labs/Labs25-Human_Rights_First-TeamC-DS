@@ -5,8 +5,8 @@ import uvicorn
 from app.api import predict, viz
 
 app = FastAPI(
-    title='YOUR-PRODUCT-TEAM-NAME DS API',
-    description='Replace this placeholder text',
+    title='Human-Rights-first-Police-Tracker DS API',
+    description='Search locations where use of police force is reported on social media',
     version='0.1',
     docs_url='/',
 )
