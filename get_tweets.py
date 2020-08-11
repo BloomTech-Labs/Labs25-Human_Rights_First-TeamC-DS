@@ -1,6 +1,13 @@
 import urllib.parse
-#from twitter_api import api
-from dotenv import api
+import twitter
+from dotenv import load_dotenv
+load_dotenv()
+
+api = twitter.Api(consumer_key=os.getenv("CONSUMER_KEY"),
+                  consumer_secret=os.getenv("CONSUMER_SECRET"),
+                  access_token_key=os.getenv("ACCESS_TOKEN_KEY"),
+                  access_token_secret=os.getenv("ACCESS_TOKEN_SECRET"))
+
 
 if __name__ == "__main__":
 #     results = api.GetSearch(raw_query="q=twitter%20&result_type=recent&since=2014-07-19&count=100")
@@ -17,6 +24,7 @@ if __name__ == "__main__":
         since="2019-08-01",
         lang="en",
         count=100)
+    records = []
     for tweet in results:
         print(tweet)
     print(len(results))
