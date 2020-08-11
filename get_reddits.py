@@ -22,11 +22,11 @@ reddit = praw.Reddit(client_id=os.getenv('REDDIT_CLIENT_ID'),
                      user_agent='lambda/posthere1')
 
 subreddit_count = 0
-for subreddit in reddit.subreddits.popular(limit=1000):
+for subreddit in reddit.subreddits.popular(limit=100):
     subreddit_count += 1
     print(subreddit_count, subreddit)
     records = []
-    for submission in subreddit.top(limit=500):
+    for submission in subreddit.top(limit=50):
         records.append(
             [subreddit.display_name, subreddit.subscribers, submission.title, submission.selftext])
     c.executemany('''insert into submissions
