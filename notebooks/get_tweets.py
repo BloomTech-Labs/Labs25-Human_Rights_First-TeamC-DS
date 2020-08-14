@@ -1,10 +1,8 @@
-#code will go in here
+import os
 import urllib.parse
 import twitter
 from dotenv import load_dotenv
-load_dotenv()
-
-
+load_dotenv('../.env')
 
 api = twitter.Api(consumer_key=os.getenv("CONSUMER_KEY"),
                   consumer_secret=os.getenv("CONSUMER_SECRET"),
@@ -15,16 +13,34 @@ api = twitter.Api(consumer_key=os.getenv("CONSUMER_KEY"),
 
 if __name__ == "__main__":
 
-#The index includes between 6-9 days of Tweets.
+    # The index includes between 6-9 days of Tweets.
 
-
+    terms = [
+        "police chokehold",
+        "pepperspray",
+        "rubber bullets",
+        "tazed",
+        "teargas",
+        "police assualt",
+        "mace",
+        "police shooting",
+        "police hitting",
+        "police attack",
+        "police hitting",
+        "police bean bag",
+        "police water hose",
+        "police kneeling"
+    ]
+    term = "(" + ") OR (".join(terms) + ")"
 
     results = api.GetSearch(
-        term="(police chokehold) OR (pepperspray) OR (rubber bullets) OR (tazed) OR (teargas) OR (police assualt) OR (mace) OR (police shooting) OR (police hitting) OR (police attack)",
-        #geocode="-180,-90,180,90", need to find geocode for the USA???
+        term=term,
+        # geocode="-180,-90,180,90", need to find geocode for the USA???
         since="2019-08-01",
         lang="en",
-        total_count=100)
+        count=10)
+
     for tweet in results:
-        print(tweet)
+        # print([tweet])
+        print(tweet.Name)
     print(len(results))
