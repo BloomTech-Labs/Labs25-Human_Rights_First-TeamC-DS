@@ -43,10 +43,6 @@ if __name__ == "__main__":
         lang="en",
         count=400)
 
-    # for tweet in results:
-    #     print(tweet)
-    # print(len(results))
-
 
 dbname = os.getenv("DB_DBNAME")
 user = os.getenv("DB_USER")
@@ -71,12 +67,6 @@ created TIMESTAMP
 """
 pg_curs.execute(create_table)
 
-# show_tables = """
-# SELECT *
-# FROM pg_catalog.pg_tables
-# WHERE schemaname !='pg_catalog'
-# AND schemaname !='information_schema';
-# """
 for tweet in results:
     insert_tweet = """
   INSERT INTO tweets
