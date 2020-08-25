@@ -53,7 +53,8 @@ terms = [
     "police hitting",
     "police bean bag",
     "police water hose",
-    "police kneeling"
+    "police kneeling",
+    "police brutality"
 ]
 term = "(" + ") OR (".join(terms) + ")"
 
@@ -78,9 +79,9 @@ for tweet in results:
     pg_curs.execute(insert_tweet,
                     (tweet.user.screen_name, tweet.text, tweet.location, tweet.id))
 
+print(len(tweets))
+# pg_curs.execute("COMMIT")
 
-pg_curs.execute("COMMIT")
+# pg_curs.fetchall()
 
-pg_curs.fetchall()
-
-pg_curs.close()
+# pg_curs.close()
