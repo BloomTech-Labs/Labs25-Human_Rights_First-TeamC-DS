@@ -1,3 +1,7 @@
+# This page is now redundant and can be deleted soon.
+# Its useful to play with the twitter API without having to create a new table and update ElephantSQL
+# see Data folder for Elephant SQL with twitter data
+
 import os
 import urllib.parse
 import twitter
@@ -41,6 +45,6 @@ if __name__ == "__main__":
         count=10)
 
     for tweet in results:
-        # print([tweet])
-        print(tweet.Name)
-    print(len(results))
+        print([tweet])
+        print(tweet.name)
+    # print(len(results))

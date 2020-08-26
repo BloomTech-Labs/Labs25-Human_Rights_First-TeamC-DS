@@ -3,3 +3,4 @@ pandas==1.1.0
 plotly==4.9.0
 uvicorn==0.11.8
 python-twitter==3.4.2
+python-dotenv==0.14.0
