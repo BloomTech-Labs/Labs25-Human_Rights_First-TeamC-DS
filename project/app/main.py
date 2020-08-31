@@ -3,6 +3,19 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from app.api import predict, viz
+from sqlalchemy.orm import Session
+from .database import SessionLocal, engine
+
+from . import models
+
+models.Base.metadata.create_all(bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 app = FastAPI(
     title='Human-Rights-first-Police-Tracker DS API',
