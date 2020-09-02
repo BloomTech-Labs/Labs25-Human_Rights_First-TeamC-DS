@@ -169,27 +169,29 @@ VALUES (%s, %s)
 with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
+    # order: incident_id 6, text 4, edit_at 2, date 5, city 3
     for row in reader:
         print(row)
         pg_curs.execute(insert_incident, [
-                        row[7], row[5], row[3], row[6], row[4]])
+                        row[6], row[4], row[2], row[5], row[3]])
 
-# place : id, city[2], state_code[27], state_name[0], county[28], latitude[29], longitude[30]
+# place
 with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
+    # order: id 6, city 3, state_code 27 , state_name 1 , county 28 , latitude29 , longitude30
     for row in reader:
         pg_curs.execute(
-            insert_place, [row[5], row[27], row[0], row[28], row[29], row[30]])
+            insert_place, [row[6], row[3], row[27], row[1], row[28], row[29], row[30]])
 
 # evidence: id, link
 with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
     for row in reader:
-        pg_curs.execute(insert_evidence, [row[5], row[6]])
-        pg_curs.execute(insert_tags, [row[5], row[31]])
-        pg_curs.execute(insert_force_tags, [row[5], row[31]])
+        pg_curs.execute(insert_evidence, [row[6], row[7]])
+        pg_curs.execute(insert_tags, [row[6], row[31]])
+        pg_curs.execute(insert_force_tags, [row[6], row[31]])
 
 
 pg_curs.execute("COMMIT")
