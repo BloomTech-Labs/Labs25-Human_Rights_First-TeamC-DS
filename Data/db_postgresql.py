@@ -26,11 +26,11 @@ pg_curs = pg_conn.cursor()
 create_incident_table = """
 DROP TABLE IF EXISTS incident_dim;
 CREATE TABLE IF NOT EXISTS incident_dim (
-index SERIAL PRIMARY KEY,
-incident_id VARCHAR,
+index serial PRIMARY KEY,
+incident_id VARCHAR UNIQUE,
 edit_at VARCHAR,
 text VARCHAR NOT NULL,
-date TIMESTAMP,
+date VARCHAR,
 city VARCHAR NOT NULL
 );
 """
@@ -42,13 +42,12 @@ create_place_table = """
 DROP TABLE IF EXISTS place_dim;
 CREATE TABLE IF NOT EXISTS place_dim (
 incident_id VARCHAR,
-city VARCHAR(30),
+city serial PRIMARY KEY,
 state_code CHAR(2),
 state_name VARCHAR(30),
 county VARCHAR(30),
 latitude DECIMAL(9,6),
 longitude DECIMAL(9,6),
-PRIMARY KEY (city),
 FOREIGN KEY (incident_id) REFERENCES incident_dim (incident_id)
 );
 """
@@ -59,7 +58,7 @@ create_evidence_table = """
 DROP TABLE IF EXISTS evidence_dim;
 CREATE TABLE IF NOT EXISTS evidence_dim (
 incident_id VARCHAR,
-link VARCHAR IF NOT NULL,
+link VARCHAR,
 PRIMARY KEY (incident_id),
 FOREIGN KEY (incident_id) REFERENCES incident_dim (incident_id)
 );
@@ -170,26 +169,29 @@ VALUES (%s, %s)
 with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
+    # order: incident_id 6, text 4, edit_at 2, date 5, city 3
     for row in reader:
+        print(row)
         pg_curs.execute(insert_incident, [
-                        row[5], row[3], row[1], row[4], row[2]])
+                        row[6], row[4], row[2], row[5], row[3]])
 
-# place : id, city[2], state_code[27], state_name[0], county[28], latitude[29], longitude[30]
+# place
 with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
+    # order: id 6, city 3, state_code 27 , state_name 1 , county 28 , latitude29 , longitude30
     for row in reader:
         pg_curs.execute(
-            insert_place, [row[5], row[27], row[0], row[28], row[29], row[30]])
+            insert_place, [row[6], row[3], row[27], row[1], row[28], row[29], row[30]])
 
 # evidence: id, link
 with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
     for row in reader:
-        pg_curs.execute(insert_evidence, [row[5], row[6]])
-        pg_curs.execute(insert_tags, [row[5], row[31]])
-        pg_curs.execute(insert_force_tags, [row[5], row[31]])
+        pg_curs.execute(insert_evidence, [row[6], row[7]])
+        pg_curs.execute(insert_tags, [row[6], row[31]])
+        pg_curs.execute(insert_force_tags, [row[6], row[31]])
 
 
 pg_curs.execute("COMMIT")
