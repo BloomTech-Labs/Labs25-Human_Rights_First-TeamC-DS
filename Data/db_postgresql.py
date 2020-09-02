@@ -123,7 +123,7 @@ VALUES (%s, %s, %s, %s, %s)
 # place dimension
 insert_place = """
 INSERT INTO place_dim
-(id, city, state_code, state_name, county, latitude, longitude)
+(incident_id, city, state_code, state_name, county, latitude, longitude)
 VALUES (%s, %s, %s, %s, %s, %s, %s)
 """
 # will also need CRONJOP info added later
@@ -132,14 +132,14 @@ VALUES (%s, %s, %s, %s, %s, %s, %s)
 # HOW TO SEPERATE LINKS FROM DIFFERENT CSV COLUMNS INTO THIS TABLE
 insert_evidence = """
 INSERT INTO evidence_dim
-(id, link)
+(incident_id, link)
 VALUES (%s, %s)
 """
 
 # tags junction
 insert_tags = """
 INSERT INTO tags_dim
-(id, force_tags)
+(incident_id, force_tags)
 VALUES (%s, %s)
 """
 
@@ -148,7 +148,7 @@ VALUES (%s, %s)
 # HOW TO SEPERATE COMMA SEPERATED TAGS FOR INSERTION INTO THIS TABLE
 insert_force_tags = """
 INSERT INTO force_tags_dim
-(id, force_tag)
+(incident_id, force_tag)
 VALUES (%s, %s)
 """
 
