@@ -28,8 +28,8 @@ class Place(Base):
     city = Column(String)
     state = Column(String)
     state_code = Column(String)
-    latitude = Column(Integer)
-    longitude = Column(Integer)
+    latitude = Column(String)
+    longitude = Column(String)
 
     incident = relationship('Incidents', back_populates='place')
 

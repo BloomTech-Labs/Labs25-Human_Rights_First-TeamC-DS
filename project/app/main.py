@@ -47,6 +47,15 @@ def read_evidences(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
     evidences = crud.get_evidences(db, skip=skip, limit=limit)
     return evidences
 
+@app.post('/incidents/{incident_id}/place/', response_model=schemas.Place)
+def create_place_for_incident(incident_id: str, place:schemas.Place, db: Session = Depends(get_db)):
+    return crud.create_place_incident(db, place=place, incident_id=incident_id)
+
+@app.get('/places/', response_model=List[schemas.Place])
+def read_places(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    places = crud.get_places(db, skip=skip, limit=limit)
+    return places
+
 app.include_router(predict.router)
 app.include_router(viz.router)
 

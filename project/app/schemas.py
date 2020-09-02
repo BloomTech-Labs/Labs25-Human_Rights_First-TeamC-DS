@@ -11,6 +11,20 @@ class Evidence(EvidenceBase):
     class Config:
         orm_mode = True
 
+
+class PlaceBase(BaseModel):
+    city: str
+    state: str
+    state_code: str
+    latitude: str
+    longitude: str
+
+class Place(PlaceBase):
+    id: int
+    
+    class Config:
+        orm_mode = True
+
 class IncidentsBase(BaseModel):
     incident_id: str
     incident_description: str
@@ -19,23 +33,10 @@ class IncidentsBase(BaseModel):
 class Incidents(IncidentsBase):
     id: int
     evidences: List[Evidence] = []
+    place: List[Place] = []
     
     class Config:
         orm_mode = True
-
-class PlaceBase(BaseModel):
-    city: str
-    state: str
-    state_code: str
-    latitude: int
-    longitude: int
-
-class Place(PlaceBase):
-    id: int
-    
-    class Config:
-        orm_mode = True
-
 # class Place(Base):
 #     __tablename__ = 'place'
 #     id = Column(Integer, primary_key=True)
