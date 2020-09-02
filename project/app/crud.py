@@ -28,3 +28,13 @@ def create_incident_evidence(db: Session, evidence: schemas.Evidence, incident_i
 
 def get_evidences(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Evidences).offset(skip).limit(limit).all()
+
+def create_place_incident(db: Session, place: schemas.Place, incident_id: str):
+    db_place = models.Place(**place.dict(), incident_id=incident_id)
+    db.add(db_place)
+    db.commit()
+    db.refresh(db_place)
+    return db_place
+
+def get_places(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Place).offset(skip).limit(limit).all()
