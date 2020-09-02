@@ -2,6 +2,7 @@
 import urllib.parse
 import os
 import psycopg2
+import psycopg2.extras
 import inspect
 import csv
 from dotenv import load_dotenv
@@ -42,7 +43,7 @@ create_place_table = """
 DROP TABLE IF EXISTS place_dim;
 CREATE TABLE IF NOT EXISTS place_dim (
 incident_id VARCHAR,
-city serial PRIMARY KEY,
+city VARCHAR,
 state_code CHAR(2),
 state_name VARCHAR(30),
 county VARCHAR(30),
@@ -85,8 +86,7 @@ CREATE TABLE IF NOT EXISTS force_tags_dim (
 incident_id VARCHAR,
 force_tag VARCHAR,
 PRIMARY KEY (incident_id, force_tag),
-FOREIGN KEY (incident_id) REFERENCES tags_dim (incident_id),
-FOREIGN KEY (force_tag) REFERENCES tags_dim (incident_id)
+FOREIGN KEY (incident_id) REFERENCES tags_dim (incident_id)
 );
 """
 
@@ -111,50 +111,10 @@ pg_curs.execute(create_force_tags_table)
 # pg_curs.execute(create_human_tags_table)
 
 
-### insert data into tables ###
-
-# incident dimension
-insert_incident = """
-INSERT INTO incident_dim
-(incident_id, text, edit_at, date, city)
-VALUES (%s, %s, %s, %s, %s)
-"""
-
-# place dimension
-insert_place = """
-INSERT INTO place_dim
-(id, city, state_code, state_name, county, latitude, longitude)
-VALUES (%s, %s, %s, %s, %s, %s, %s)
-"""
-# will also need CRONJOP info added later
-
-# evidence dimension
-# HOW TO SEPERATE LINKS FROM DIFFERENT CSV COLUMNS INTO THIS TABLE
-insert_evidence = """
-INSERT INTO evidence_dim
-(id, link)
-VALUES (%s, %s)
-"""
-
-# tags junction
-insert_tags = """
-INSERT INTO tags_dim
-(id, force_tags)
-VALUES (%s, %s)
-"""
-
-# will need model run before for new data from CRONJOB
-# force tags dimension
-# HOW TO SEPERATE COMMA SEPERATED TAGS FOR INSERTION INTO THIS TABLE
-insert_force_tags = """
-INSERT INTO force_tags_dim
-(id, force_tag)
-VALUES (%s, %s)
-"""
-
 # Stretch goals--add model to tag incoming data with human tags
 # human tags dimension
-# HOW TO SEPERATE COMMA SEPERATED TAGS FOR INSERTION INTO THIS TABLE
+
+
 # insert_human_tags = """
 # INSERT INTO human_tags_dim
 # (id, human_tag)
@@ -162,40 +122,87 @@ VALUES (%s, %s)
 # """
 
 
-# .copy_from method requires csv to be the same columns as the SQL table
-
 # function that inserts data into tables from training data csv
-
 with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
     # order: incident_id 6, text 4, edit_at 2, date 5, city 3
+    data = []
     for row in reader:
-        print(row)
-        pg_curs.execute(insert_incident, [
-                        row[6], row[4], row[2], row[5], row[3]])
+        data.append([row[6], row[4], row[2], row[5], row[3]])
+    sql = """
+        INSERT INTO incident_dim
+        (incident_id, text, edit_at, date, city)
+        VALUES %s
+        """
+    psycopg2.extras.execute_values(
+        pg_curs, sql, data, template=None, page_size=10000)
 
 # place
 with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
     # order: id 6, city 3, state_code 27 , state_name 1 , county 28 , latitude29 , longitude30
+    data = []
     for row in reader:
-        pg_curs.execute(
-            insert_place, [row[6], row[3], row[27], row[1], row[28], row[29], row[30]])
+        data.append([row[6], row[3], row[27], row[1],
+                     row[28], row[29], row[30]])
+    sql = """
+        INSERT INTO place_dim
+        (incident_id, city, state_code, state_name, county, latitude, longitude)
+        VALUES %s
+        """
+    psycopg2.extras.execute_values(
+        pg_curs, sql, data, template=None, page_size=10000)
 
 # evidence: id, link
 with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
+    data = []
     for row in reader:
-        pg_curs.execute(insert_evidence, [row[6], row[7]])
-        pg_curs.execute(insert_tags, [row[6], row[31]])
-        pg_curs.execute(insert_force_tags, [row[6], row[31]])
+        data.append([row[6], row[7]])
+    sql = """
+        INSERT INTO evidence_dim
+        (incident_id, link)
+        VALUES %s
+        """
+    psycopg2.extras.execute_values(
+        pg_curs, sql, data, template=None, page_size=10000)
+
+  # Force tags
+with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
+    reader = csv.reader(f)
+    next(f)  # skipping the header row
+    data = []
+    for row in reader:
+        data.append([row[6], row[32]])
+    sql = """
+        INSERT INTO tags_dim
+        (incident_id, force_tag)
+        VALUES %s
+        """
+    psycopg2.extras.execute_values(
+        pg_curs, sql, data, template=None, page_size=10000)
+
+  # Force tags junction (same as force tags right now until we add human tags)
+with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
+    reader = csv.reader(f)
+    next(f)  # skipping the header row
+    data = []
+    for row in reader:
+        data.append([row[6], row[32]])
+    sql = """
+        INSERT INTO force_tags_dim
+        (incident_id, force_tag)
+        VALUES %s
+        """
+    psycopg2.extras.execute_values(
+        pg_curs, sql, data, template=None, page_size=10000)
 
 
 pg_curs.execute("COMMIT")
 
-pg_curs.fetchall()
+# pg_curs.fetchall()
 
 pg_curs.close()
