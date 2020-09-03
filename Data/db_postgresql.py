@@ -16,6 +16,16 @@ host = os.getenv("DB_HOST")
 print(host, user, dbname)
 
 # initiate connection
+"""
+psycopg2 is a PostgreSQL database adapter for the Python programming
+language.  psycopg2 was written with the aim of being very small and fast,
+and stable as a rock.
+psycopg2 is different from the other database adapter because it was
+designed for heavily multi-threaded applications that create and destroy
+lots of cursors and make a conspicuous number of concurrent INSERTs or
+UPDATEs. psycopg2 also provide full asynchronous operations and support
+for coroutine libraries.
+"""
 pg_conn = psycopg2.connect(dbname=dbname, user=user,
                            password=password, host=host)
 # create cursor
@@ -140,11 +150,11 @@ with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data
 with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
-    # order: id 6, city 3, state_code 27 , state_name 1 , county 28 , latitude29 , longitude30
+    # order: id 6, city 3, state_code 7 , state_name 1 , county 28 , latitude9 , longitude10
     data = []
     for row in reader:
-        data.append([row[6], row[3], row[27], row[1],
-                     row[28], row[29], row[30]])
+        data.append([row[6], row[3], row[7], row[1],
+                     row[8], row[9], row[10]])
     sql = """
         INSERT INTO place_dim
         (incident_id, city, state_code, state_name, county, latitude, longitude)
@@ -159,10 +169,8 @@ with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data
     next(f)  # skipping the header row
     data = []
     for row in reader:
+        data.append([row[6], row[13]])
 
-        data.append([row[6], row[7], ])
-        # if range(rows-7-27)
-        # if not None
     sql = """
         INSERT INTO evidence_dim
         (incident_id, link)
@@ -178,7 +186,7 @@ with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data
     next(f)  # skipping the header row
     data = []
     for row in reader:
-        data.append([row[6], row[32]])
+        data.append([row[6], row[12]])
     sql = """
         INSERT INTO force_tags_dim
         (incident_id, force_tag)
@@ -187,7 +195,7 @@ with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data
     psycopg2.extras.execute_values(
         pg_curs, sql, data, template=None, page_size=10000)
 
-# Force tags
+# Force tags listed with index 1-9
 
 data = [['Presence'], ['Verbal'], ['EHC Soft Technique'], ['EHC Hard Technique'],
         ['Blunt Impact'], ['Chemical'], ['Projectile'], ['CED'], ['Other/Unknown']]
@@ -203,6 +211,6 @@ psycopg2.extras.execute_values(
 
 pg_curs.execute("COMMIT")
 
-pg_curs.fetchall()
+# pg_curs.fetchall()
 
 pg_curs.close()
