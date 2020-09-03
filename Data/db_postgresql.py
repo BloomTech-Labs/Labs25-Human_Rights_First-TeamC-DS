@@ -25,7 +25,7 @@ pg_curs = pg_conn.cursor()
 
 # incident dimension
 create_incident_table = """
-DROP TABLE IF EXISTS incident_dim;
+DROP TABLE IF EXISTS incident_dim CASCADE;
 CREATE TABLE IF NOT EXISTS incident_dim (
 index serial PRIMARY KEY,
 incident_id VARCHAR UNIQUE,
@@ -67,13 +67,11 @@ FOREIGN KEY (incident_id) REFERENCES incident_dim (incident_id)
 
 # tags junction
 # one to one with incident
-create_tags_table = """
-DROP TABLE IF EXISTS tags_dim;
-CREATE TABLE IF NOT EXISTS tags_dim (
-incident_id VARCHAR,
-force_tag VARCHAR,
-PRIMARY KEY (incident_id),
-FOREIGN KEY (incident_id) REFERENCES incident_dim (incident_id)
+create_tags_ref_table = """
+DROP TABLE IF EXISTS tags_ref;
+CREATE TABLE IF NOT EXISTS tags_ref (
+index serial PRIMARY KEY,
+tag VARCHAR(30)
 );
 """
 
@@ -106,7 +104,7 @@ FOREIGN KEY (incident_id) REFERENCES tags_dim (incident_id)
 pg_curs.execute(create_incident_table)
 pg_curs.execute(create_place_table)
 pg_curs.execute(create_evidence_table)
-pg_curs.execute(create_tags_table)
+pg_curs.execute(create_tags_ref_table)
 pg_curs.execute(create_force_tags_table)
 # pg_curs.execute(create_human_tags_table)
 
@@ -161,7 +159,10 @@ with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data
     next(f)  # skipping the header row
     data = []
     for row in reader:
-        data.append([row[6], row[7]])
+
+        data.append([row[6], row[7], ])
+        # if range(rows-7-27)
+        # if not None
     sql = """
         INSERT INTO evidence_dim
         (incident_id, link)
@@ -170,22 +171,8 @@ with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data
     psycopg2.extras.execute_values(
         pg_curs, sql, data, template=None, page_size=10000)
 
-  # Force tags
-with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
-    reader = csv.reader(f)
-    next(f)  # skipping the header row
-    data = []
-    for row in reader:
-        data.append([row[6], row[32]])
-    sql = """
-        INSERT INTO tags_dim
-        (incident_id, force_tag)
-        VALUES %s
-        """
-    psycopg2.extras.execute_values(
-        pg_curs, sql, data, template=None, page_size=10000)
 
-  # Force tags junction (same as force tags right now until we add human tags)
+# Force tags junction (same as force tags right now until we add human tags)
 with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
@@ -200,9 +187,22 @@ with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data
     psycopg2.extras.execute_values(
         pg_curs, sql, data, template=None, page_size=10000)
 
+# Force tags
+
+data = [['Presence'], ['Verbal'], ['EHC Soft Technique'], ['EHC Hard Technique'],
+        ['Blunt Impact'], ['Chemical'], ['Projectile'], ['CED'], ['Other/Unknown']]
+
+sql = """
+      INSERT INTO tags_ref
+      (tag)
+      VALUES %s
+       """
+psycopg2.extras.execute_values(
+    pg_curs, sql, data, template=None, page_size=10000)
+
 
 pg_curs.execute("COMMIT")
 
-# pg_curs.fetchall()
+pg_curs.fetchall()
 
 pg_curs.close()
