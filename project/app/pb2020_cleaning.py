@@ -3,8 +3,8 @@ import pandas as pd
 import re
 
 # police brutality data
-pb_csv = pd.read_csv('https://raw.githubusercontent.com/2020PB/police-brutality/data_build/all-locations.csv')
-pb_df = pd.DataFrame(pb_csv)
+# pb_csv = pd.read_csv('https://raw.githubusercontent.com/2020PB/police-brutality/data_build/all-locations.csv')
+# pb_df = pd.DataFrame(pb_csv)
 
 def clean_pb2020(df):
     '''
@@ -28,9 +28,15 @@ def clean_pb2020(df):
     # remove leading and trailing whitespace from columns
     df['CITY'] = df['CITY'].str.strip()
     df['STATE_NAME'] = df['STATE_NAME'].str.strip()
+    # combine evidence columns which aren't empty into a new column
+    links = ['Link 1', 'Link 2', 'Link 3', 'Link 4', 'Link 5', 'Link 6', 'Link 7', 'Link 8', 'Link 9', 'Link 10', 
+    'Link 11', 'Link 12', 'Link 13', 'Link 14', 'Link 15', 'Link 16', 'Link 17', 'Link 18', 'Link 19', 'Link 20']
+    df['links'] = df[links].agg(lambda x: x.dropna().tolist(), axis=1)
+    # drop old evidence columns
+    df = df.drop(links, axis=1)
     # put description column into str and convert text to lowercase
     df['text'] = df['text'].astype(str).str.lower()
-    # regex for nlp
+    # regex for nlp:
     # remove backslash and apostrophe
     df['text'] = df['text'].str.replace(r'\'', r'')
     # remove anything that isn't in a-z
@@ -42,7 +48,7 @@ def clean_pb2020(df):
 pb_df = clean_pb2020(pb_df)
 
 ### location data ###
-loc_csv = pd.read_csv('https://raw.githubusercontent.com/kelvins/US-Cities-Database/master/csv/us_cities.csv')
+loc_csv = pd.read_csv('https://raw.githubusercontent.com/kelvins/US-Cities-Database/main/csv/us_cities.csv')
 loc_df = pd.DataFrame(loc_csv)
 
 def clean_loc(df):
@@ -61,10 +67,17 @@ def clean_loc(df):
 
     return df
 
-# apply clean fxn
+# apply location clean fxn
 loc_df = clean_loc(loc_df)
 
 ### merge ###
-incident_df = pb_df.merge(loc_df, how='inner')
+def merge_loc(df):
+    '''
+    adds location data to the PB2020 incidents
+    creates a new df of the combined data
+    '''
+    df = pb_df.merge(loc_df, how='inner')
+    # drop any incidents that got duplicated
+    df = df.drop_duplicates(subset=['id'], keep='last')
 
-print(incident_df.shape)
+    return df
