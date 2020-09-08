@@ -39,7 +39,7 @@ def clean_pb2020(df):
     df = df.drop(links, axis=1)
     # put description column into str and convert text to lowercase
     df['text'] = df['text'].astype(str).str.lower()
-    # regex for nlp
+    # regex for nlp:
     # remove backslash and apostrophe
     df['text'] = df['text'].str.replace(r'\'', r'')
     # remove anything that isn't in a-z
@@ -59,16 +59,18 @@ def geoloc(df):
     '''
     # Nominatim for geocoding
     locator = Nominatim(user_agent="myGeocoder")
-    # delay geocoding by 1 second between each address to avoid rate limit
+    # delay geocoding by 1 second between each incident to avoid rate limit
     geocode = RateLimiter(locator.geocode, min_delay_seconds=1)
+    # create column of city, state to apply geocode to
+    df['city_state'] = df['CITY'].astype(str) + ',' + df['STATE_NAME']
     # create column by applying geocode
-    df['location'] = df['CITY'].apply(geocode)
+    df['location'] = df['city_state'].apply(geocode)
     # create lat, long, altitude as a single tuple column via pulling that data from location column
     df['point'] = df['location'].apply(lambda loc: tuple(loc.point) if loc else None)
     # split latitude, longitude, and altitude columns into three separate columns
     df[['latitude', 'longitude', 'altitude']] = pd.DataFrame(df['point'].tolist(), index=df.index)
     # drop unnecessary columns
-    df = df.drop(['altitude', 'location', 'point'], axis=1)
+    df = df.drop(['altitude', 'location', 'point', 'city_state'], axis=1)
 
     return df
 
