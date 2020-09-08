@@ -35,11 +35,8 @@ def read_incidents(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
 
 @app.post('/cron_update/', response_model=List[schemas.PBIncidents])
 def read_pbincidents(pbincidents: list):
-    print(type(pbincidents))
     df = pd.DataFrame(pbincidents)
-    print(len(df))
-    print(list(df.columns))
-
+    
 app.include_router(predict.router)
 app.include_router(viz.router)
 
