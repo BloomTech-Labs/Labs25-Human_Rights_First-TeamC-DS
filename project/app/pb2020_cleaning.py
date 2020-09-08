@@ -1,11 +1,15 @@
 # imports
 import pandas as pd
 import re
+import geopy
+from geopy.geocoders import Nominatim # Nominatim geocoding (built on OpenStreetMap data)
+from geopy.extra.rate_limiter import RateLimiter
 
-# police brutality data
+# police use of force data
 pb_csv = pd.read_csv('https://raw.githubusercontent.com/2020PB/police-brutality/data_build/all-locations.csv')
 pb_df = pd.DataFrame(pb_csv)
 
+### clean ### 
 def clean_pb2020(df):
     '''
     function that takes PB2020 api data
@@ -19,7 +23,6 @@ def clean_pb2020(df):
     # change substandard city and state names
     df['CITY']= df['CITY'].str.replace('New York City', 'New York', case = False)
     df['CITY']= df['CITY'].str.replace('DC', 'Washington', case = True)
-    df['CITY']= df['CITY'].str.replace('Hollywood', 'Los Angeles', case = True)
     df['STATE_NAME']= df['STATE_NAME'].str.replace('Washington DC', 'District of Columbia', case = False)
     # drop NaNs
     df.dropna(subset = ['CITY', 'date'], inplace=True)
@@ -28,6 +31,12 @@ def clean_pb2020(df):
     # remove leading and trailing whitespace from columns
     df['CITY'] = df['CITY'].str.strip()
     df['STATE_NAME'] = df['STATE_NAME'].str.strip()
+    # combine evidence columns which aren't empty into a new column
+    links = ['Link 1', 'Link 2', 'Link 3', 'Link 4', 'Link 5', 'Link 6', 'Link 7', 'Link 8', 'Link 9', 'Link 10', 
+    'Link 11', 'Link 12', 'Link 13', 'Link 14', 'Link 15', 'Link 16', 'Link 17', 'Link 18', 'Link 19', 'Link 20']
+    df['links'] = df[links].agg(lambda x: x.dropna().tolist(), axis=1)
+    # drop old evidence columns
+    df = df.drop(links, axis=1)
     # put description column into str and convert text to lowercase
     df['text'] = df['text'].astype(str).str.lower()
     # regex for nlp
@@ -41,30 +50,27 @@ def clean_pb2020(df):
 # apply clean fxn
 pb_df = clean_pb2020(pb_df)
 
-### location data ###
-loc_csv = pd.read_csv('https://raw.githubusercontent.com/kelvins/US-Cities-Database/master/csv/us_cities.csv')
-loc_df = pd.DataFrame(loc_csv)
-
-def clean_loc(df):
+### add geolocation data ###
+def geoloc(df):
     '''
-    function that cleans and processes location data
+    function that adds geolocation data
+    given city of incident
+    outputs df with lat and long columns
     '''
-    # drop redundant id column in loc_df
-    df = df.drop('ID', axis=1)
-    # drop rows with the same city and state but different counties
-    df = df.drop_duplicates(subset=['STATE_CODE','CITY'], keep='first')
-    # add missing cities
-    Ferguson = {'STATE_CODE':'MO' ,'STATE_NAME':'Missouri', 'CITY':'Ferguson', 'COUNTY':'St. Louis', 'LATITUDE':38.744167, 'LONGITUDE':-90.305278}
-    DC = {'STATE_CODE':'DC' ,'STATE_NAME':'District of Columbia', 'CITY':'Washington', 'COUNTY':'St. Louis', 'LATITUDE':38.912217, 'LONGITUDE':-77.017691}
-    df = df.append(Ferguson, ignore_index=True)
-    df = df.append(DC, ignore_index=True)
+    # Nominatim for geocoding
+    locator = Nominatim(user_agent="myGeocoder")
+    # delay geocoding by 1 second between each address to avoid rate limit
+    geocode = RateLimiter(locator.geocode, min_delay_seconds=1)
+    # create column by applying geocode
+    df['location'] = df['CITY'].apply(geocode)
+    # create lat, long, altitude as a single tuple column via pulling that data from location column
+    df['point'] = df['location'].apply(lambda loc: tuple(loc.point) if loc else None)
+    # split latitude, longitude, and altitude columns into three separate columns
+    df[['latitude', 'longitude', 'altitude']] = pd.DataFrame(df['point'].tolist(), index=df.index)
+    # drop unnecessary columns
+    df = df.drop(['altitude', 'location', 'point'], axis=1)
 
     return df
 
-# apply clean fxn
-loc_df = clean_loc(loc_df)
-
-### merge ###
-incident_df = pb_df.merge(loc_df, how='inner')
-
-print(incident_df.shape)
+# apply geolocation fxn
+pb_df = geoloc(pb_df)
