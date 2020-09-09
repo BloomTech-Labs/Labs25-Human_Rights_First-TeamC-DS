@@ -46,11 +46,19 @@ def read_incidents(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
 
 @app.post('/cron_update/')
 def read_pbincidents(pbincident: List[schemas.PBIncident]):
+    # list incidents into dicts to create dataframe
     list_incidents = [i.dict() for i in pbincident]
     df = pd.DataFrame.from_dict(list_incidents, orient='columns')
     # pickle dump from notebook category_tags.py
-    tags_model = open('tags_name.pkl', 'rb')
-    clf2 = pickle.loads(tags_model)
+    #tags_model = open('tags_name.pkl', 'rb')
+    #clf2 = pickle.loads(tags_model)
+
+
+# this is the code for the second pickle
+# Load from file
+    with open('tags_model.pkl', 'rb') as file:
+        clf2 = pickle.load(file)
+
 # take the new data and vectorize it for the model
 # run vectorized data through model
     df_tfidf = tfidf_vectorizer.transform(df['name'])
