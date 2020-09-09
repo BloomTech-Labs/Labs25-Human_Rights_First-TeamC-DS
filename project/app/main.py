@@ -44,7 +44,7 @@ def read_incidents(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
     return incidents
 
 
-@app.post('/cron_update/', response_model=List[schemas.PBIncidents])
+@app.post('/cron_update/')
 def read_pbincidents(pbincidents: list):
     df = pd.DataFrame(pbincidents)
     # pickle dump from notebook category_tags.py
