@@ -10,7 +10,11 @@ from . import crud, models, schemas
 
 from typing import List
 
+import pickle
+import pandas as pd
+
 models.Base.metadata.create_all(bind=engine)
+
 
 def get_db():
     db = SessionLocal()
@@ -19,6 +23,7 @@ def get_db():
     finally:
         db.close()
 
+
 app = FastAPI(
     title='Human-Rights-first-Police-Tracker DS API',
     description='Search locations where use of police force is reported on social media',
@@ -26,35 +31,17 @@ app = FastAPI(
     docs_url='/',
 )
 
-@app.post("/incidents/", response_model=schemas.Incidents)
-def create_incident(incident: schemas.Incidents, db: Session = Depends(get_db)):
-    db_incident = crud.get_incident(db, incident_id=incident.incident_id)
-    if db_incident:
-        raise HTTPException(status_code=400, detail='incident already exists')
-    return crud.create_incident(db=db, incident=incident)
 
 @app.get("/incidents/", response_model=List[schemas.Incidents])
 def read_incidents(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    incidents = crud.get_incidents(db, skip=skip,limit=limit)
+    incidents = crud.get_incidents(db, skip=skip, limit=limit)
     return incidents
 
-@app.post('/incidents/{incident_id}/evidence/', response_model=schemas.Evidence)
-def create_evidence_for_incident(incident_id: str, evidence: schemas.Evidence, db: Session = Depends(get_db)):
-    return crud.create_incident_evidence(db, evidence=evidence, incident_id=incident_id)
 
-@app.get('/evidences/', response_model=List[schemas.Evidence])
-def read_evidences(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    evidences = crud.get_evidences(db, skip=skip, limit=limit)
-    return evidences
+@app.post('/cron_update/', response_model=List[schemas.PBIncidents])
+def read_pbincidents(pbincidents: list):
+    df = pd.DataFrame(pbincidents)
 
-@app.post('/incidents/{incident_id}/place/', response_model=schemas.Place)
-def create_place_for_incident(incident_id: str, place:schemas.Place, db: Session = Depends(get_db)):
-    return crud.create_place_incident(db, place=place, incident_id=incident_id)
-
-@app.get('/places/', response_model=List[schemas.Place])
-def read_places(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    places = crud.get_places(db, skip=skip, limit=limit)
-    return places
 
 app.include_router(predict.router)
 app.include_router(viz.router)
