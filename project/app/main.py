@@ -41,7 +41,13 @@ app = FastAPI(
 @app.get("/incidents/", response_model=List[schemas.Incidents])
 def read_incidents(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     incidents = crud.get_incidents(db, skip=skip, limit=limit)
-# pickle dump from notebook category_tags.py
+    return incidents
+
+
+@app.post('/cron_update/', response_model=List[schemas.PBIncidents])
+def read_pbincidents(pbincidents: list):
+    df = pd.DataFrame(pbincidents)
+    # pickle dump from notebook category_tags.py
     tags_model = open('tags_name.pkl', 'rb')
     clf2 = pickle.loads(tags_model)
 # take the new data and vectorize it for the model
@@ -53,12 +59,6 @@ def read_incidents(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
 # clean the results by eliminating commas and parenthesis, append to df
     df['tag_predicted'] = df['tag_predicted'].apply(lambda x: ', '.join(x))
     tags_model.close()
-    return incidents
-
-
-@app.post('/cron_update/', response_model=List[schemas.PBIncidents])
-def read_pbincidents(pbincidents: list):
-    df = pd.DataFrame(pbincidents)
 
 
 app.include_router(predict.router)
