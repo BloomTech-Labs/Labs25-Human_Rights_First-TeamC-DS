@@ -48,8 +48,15 @@ def read_incidents(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
 def read_pbincidents(pbincidents: list):
     df = pd.DataFrame(pbincidents)
     # pickle dump from notebook category_tags.py
-    tags_model = open('tags_name.pkl', 'rb')
-    clf2 = pickle.loads(tags_model)
+    #tags_model = open('tags_name.pkl', 'rb')
+    #clf2 = pickle.loads(tags_model)
+
+
+# this is the code for the second pickle
+# Load from file
+    with open('tags_model.pkl', 'rb') as file:
+        clf2 = pickle.load(file)
+
 # take the new data and vectorize it for the model
 # run vectorized data through model
     df_tfidf = tfidf_vectorizer.transform(df['name'])
