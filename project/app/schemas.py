@@ -1,4 +1,5 @@
 from typing import List, Optional
+import pandas as pd
 
 from pydantic import BaseModel
 
@@ -37,26 +38,15 @@ class Incidents(IncidentsBase):
     
     class Config:
         orm_mode = True
-# class Place(Base):
-#     __tablename__ = 'place'
-#     id = Column(Integer, primary_key=True)
-#     incident_id = Column(String, ForeignKey('incidents.incident_id'))
-#     city = Column(String)
-#     state = Column(String)
-#     state_code = Column(String)
-#     latitude = Column(Integer)
-#     longitude = Column(Integer)
 
-#     incident = relationship('Incidents', back_populates='place')
-
-# class Tags_Junction(Base):
-#     __tablename__ = 'tags_junction'
-#     id = Column(Integer, primary_key=True)
-#     incident_id = Column(String, ForeignKey('incidents.incident_id'))
-#     force_tag_id = Column(Integer, ForeignKey('forcetags.force_id'))
-
-# class ForceTags(Base):
-#     __tablename__ = 'forcetags'
-#     id = Column(Integer, primary_key=True)
-#     force_id = Column(Integer, ForeignKey('tags_junction.force_tag_id'))
-#     force_string = Column(String)
+class PBIncident(BaseModel):
+    """ Use this data model to parse the request body JSON."""
+    # ['links', 'state', 'edit_at', 'city', 'name', 'date', 'date_text', 'id']
+    links: List[str]
+    state: str
+    edit_at: str
+    city: str
+    name: str
+    date: str
+    date_text: str
+    id: str
