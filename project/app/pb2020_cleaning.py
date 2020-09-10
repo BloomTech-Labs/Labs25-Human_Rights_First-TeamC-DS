@@ -36,12 +36,6 @@ def clean_pb2020(df):
     # remove leading and trailing whitespace from columns
     df['CITY'] = df['CITY'].str.strip()
     df['STATE_NAME'] = df['STATE_NAME'].str.strip()
-    # combine evidence columns which aren't empty into a new column
-    links = ['Link 1', 'Link 2', 'Link 3', 'Link 4', 'Link 5', 'Link 6', 'Link 7', 'Link 8', 'Link 9', 'Link 10',
-             'Link 11', 'Link 12', 'Link 13', 'Link 14', 'Link 15', 'Link 16', 'Link 17', 'Link 18', 'Link 19', 'Link 20']
-    df['links'] = df[links].agg(lambda x: x.dropna().tolist(), axis=1)
-    # drop old evidence columns
-    df = df.drop(links, axis=1)
     # put description column into str and convert text to lowercase
     df['text'] = df['text'].astype(str).str.lower()
     # regex for nlp:
