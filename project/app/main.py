@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from .database import SessionLocal, engine
 
 from . import crud, models, schemas
+from .pb2020_cleaning import clean_pb2020
 
 from typing import List
 
@@ -49,25 +50,27 @@ def read_pbincidents(pbincident: List[schemas.PBIncident]):
     # list incidents into dicts to create dataframe
     list_incidents = [i.dict() for i in pbincident]
     df = pd.DataFrame.from_dict(list_incidents, orient='columns')
-    # pickle dump from notebook category_tags.py
-    #tags_model = open('tags_name.pkl', 'rb')
-    #clf2 = pickle.loads(tags_model)
+    # clean functions
+    df = clean_pb2020(df)
+    # df = geoloc(df)
 
+    # this is the code for the second pickle
+    # Load from file
+    with open('app/vect_bin_pickle.pkl', 'rb') as file:
+        picklefile = pickle.load(file)
+    # take the new data and vectorize it for the model
+    # run vectorized data through model
+    tfidf_vectorizer = picklefile['tfidf']
+    df_tfidf = tfidf_vectorizer.transform(df['text'])
 
-# this is the code for the second pickle
-# Load from file
-    with open('tags_model.pkl', 'rb') as file:
-        clf2 = pickle.load(file)
-
-# take the new data and vectorize it for the model
-# run vectorized data through model
-    df_tfidf = tfidf_vectorizer.transform(df['name'])
+    clf2 = picklefile['clf']
     y_pred = clf2.predict(df_tfidf)
-# get predictions and inverse transform the results so we can read the results
+    # get predictions and inverse transform the results so we can read the results
+    multilabel_binarizer = picklefile['mlb']
     df['tag_predicted'] = multilabel_binarizer.inverse_transform(y_pred)
-# clean the results by eliminating commas and parenthesis, append to df
+    # clean the results by eliminating commas and parenthesis, append to df
     df['tag_predicted'] = df['tag_predicted'].apply(lambda x: ', '.join(x))
-    tags_model.close()
+    print(df[['text', 'tag_predicted']].head())
 
 
 app.include_router(predict.router)
