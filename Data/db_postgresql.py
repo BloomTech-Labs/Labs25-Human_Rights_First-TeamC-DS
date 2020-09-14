@@ -38,14 +38,14 @@ pg_curs = pg_conn.cursor()
 create_place_table = """
 DROP TABLE IF EXISTS place_dim;
 CREATE TABLE IF NOT EXISTS place_dim (
+index SERIAL PRIMARY KEY,
 city VARCHAR,
 state_code CHAR(2),
 state_name VARCHAR(30),
 county VARCHAR(30),
 latitude DECIMAL(9,6),
 longitude DECIMAL(9,6),
-counter SMALLINT(5),
-place_code PRIMARY KEY(state_code, city)
+counter INT
 );
 """
 
@@ -58,7 +58,7 @@ incident_id VARCHAR UNIQUE,
 edit_at VARCHAR,
 text VARCHAR NOT NULL,
 date VARCHAR,
-FOREIGN KEY (place_code) REFERENCES place_dim (place_code)
+FOREIGN KEY (index) REFERENCES place_dim (index)
 );
 """
 
@@ -110,8 +110,8 @@ FOREIGN KEY (incident_id) REFERENCES tags_dim (incident_id)
 
 
 # create the tables
-pg_curs.execute(create_incident_table)
 pg_curs.execute(create_place_table)
+pg_curs.execute(create_incident_table)
 pg_curs.execute(create_evidence_table)
 pg_curs.execute(create_tags_ref_table)
 pg_curs.execute(create_force_tags_table)
