@@ -33,6 +33,22 @@ pg_curs = pg_conn.cursor()
 
 ### create tables ###
 
+# place dimension
+# one to one with incident
+create_place_table = """
+DROP TABLE IF EXISTS place_dim;
+CREATE TABLE IF NOT EXISTS place_dim (
+city VARCHAR,
+state_code CHAR(2),
+state_name VARCHAR(30),
+county VARCHAR(30),
+latitude DECIMAL(9,6),
+longitude DECIMAL(9,6),
+counter SMALLINT(5),
+place_code PRIMARY KEY(state_code, city)
+);
+"""
+
 # incident dimension
 create_incident_table = """
 DROP TABLE IF EXISTS incident_dim CASCADE;
@@ -42,24 +58,7 @@ incident_id VARCHAR UNIQUE,
 edit_at VARCHAR,
 text VARCHAR NOT NULL,
 date VARCHAR,
-city VARCHAR NOT NULL
-);
-"""
-
-
-# place dimesion
-# one to one with incident
-create_place_table = """
-DROP TABLE IF EXISTS place_dim;
-CREATE TABLE IF NOT EXISTS place_dim (
-incident_id VARCHAR,
-city VARCHAR,
-state_code CHAR(2),
-state_name VARCHAR(30),
-county VARCHAR(30),
-latitude DECIMAL(9,6),
-longitude DECIMAL(9,6),
-FOREIGN KEY (incident_id) REFERENCES incident_dim (incident_id)
+FOREIGN KEY (place_code) REFERENCES place_dim (place_code)
 );
 """
 
@@ -137,10 +136,10 @@ with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data
     # order: incident_id 6, text 4, edit_at 2, date 5, city 3
     data = []
     for row in reader:
-        data.append([row[6], row[4], row[2], row[5], row[3]])
+        data.append([row[6], row[4], row[2], row[5]])
     sql = """
         INSERT INTO incident_dim
-        (incident_id, text, edit_at, date, city)
+        (incident_id, text, edit_at, date)
         VALUES %s
         """
     psycopg2.extras.execute_values(
@@ -157,7 +156,7 @@ with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data
                      row[8], row[9], row[10]])
     sql = """
         INSERT INTO place_dim
-        (incident_id, city, state_code, state_name, county, latitude, longitude)
+        (city, state_code, state_name, county, latitude, longitude)
         VALUES %s
         """
     psycopg2.extras.execute_values(
