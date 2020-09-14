@@ -152,7 +152,7 @@ with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data
     # order: id 6, city 3, state_code 7 , state_name 1 , county 28 , latitude9 , longitude10
     data = []
     for row in reader:
-        data.append([row[6], row[3], row[7], row[1],
+        data.append([row[3], row[7], row[1],
                      row[8], row[9], row[10]])
     sql = """
         INSERT INTO place_dim
