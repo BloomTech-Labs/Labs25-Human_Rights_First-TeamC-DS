@@ -5,42 +5,36 @@ from .database import Base
 
 class Incidents(Base):
     __tablename__ = 'incidents'
-    id = Column(Integer, primary_key=True)
-    incident_id = Column(String)
-    incident_description = Column(String)
-    time_id = Column(String)
-
-    evidences = relationship('Evidences', back_populates='incident')
-    place = relationship('Place', back_populates='incident')
+    id = Column(String, primary_key=True)
+    place_id = Column(String)
+    edit_at = Column(String)
+    text = Column(String)
+    date = Column(String)
 
 class Evidences(Base):
     __tablename__ = 'evidences'
     id = Column(Integer, primary_key=True)
+    incident_id = Column(String)
     link_string = Column(String)
-    incident_id = Column(String, ForeignKey('incidents.incident_id'))
-
-    incident = relationship('Incidents', back_populates="evidences")
 
 class Place(Base):
     __tablename__ = 'place'
     id = Column(Integer, primary_key=True)
-    incident_id = Column(String, ForeignKey('incidents.incident_id'))
     city = Column(String)
-    state = Column(String)
     state_code = Column(String)
+    state_name = Column(String)
+    county = Column(String)
     latitude = Column(String)
     longitude = Column(String)
+    counter = Column(Integer)
 
-    incident = relationship('Incidents', back_populates='place')
-
-class TagsJunction(Base):
-    __tablename__ = 'tagsjunction'
+class Tags(Base):
+    __tablename__ = 'tags'
     id = Column(Integer, primary_key=True)
-    incident_id = Column(String, ForeignKey('incidents.incident_id'))
-    force_tag_id = Column(Integer, ForeignKey('forcetags.force_id'))
+    incident_id = Column(String)
+    tag = Column(Integer)
 
-class ForceTags(Base):
-    __tablename__ = 'forcetags'
+class TagsRef(Base):
+    __tablename__ = 'tags_ref'
     id = Column(Integer, primary_key=True)
-    force_id = Column(Integer, ForeignKey('tagsjunction.force_tag_id'))
-    force_string = Column(String)
+    tag = Column(String)
