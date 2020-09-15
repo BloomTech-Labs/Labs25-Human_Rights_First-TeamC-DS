@@ -5,19 +5,33 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 import pandas as pd
 
-from ..database import SessionLocal, engine
+from ..database import SessionLocal, engine, get_db
 from .. import crud, models, schemas
 from ..pb2020_cleaning import clean_pb2020, geoloc
 
 router = APIRouter()
-con = engine.connect()
+# con = engine.connect()
 
 
 @router.post('/cron_update/')
-def read_pbincidents(pbincident: List[schemas.PBIncident]):
+def read_pbincidents(pbincident: List[schemas.PBIncident], db: Session = Depends(get_db)):
     # list incidents into dicts to create dataframe
     list_incidents = [i.dict() for i in pbincident]
     df = pd.DataFrame.from_dict(list_incidents, orient='columns')
+
+    counts = crud.get_places(db)
+    city_counts = {i[1]:{i[0]:i[2]} for i in counts}
+
+    allnew_idcount = []
+    for i in list(df['id']):
+        id_split = i.split('-')
+        city = id_split[1].capitalize()
+        state = id_split[0].upper()
+        if int(id_split[-1]) > city_counts[state][city]:
+            allnew_idcount.append(i)
+        
+    updates_df = df[df['id'].isin(allnew_idcount)].copy()
+
     # clean functions
     df = clean_pb2020(df)
     # df = geoloc(df)
