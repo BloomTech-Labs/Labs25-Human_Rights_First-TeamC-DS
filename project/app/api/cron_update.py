@@ -39,16 +39,18 @@ def read_pbincidents(pbincident: List[schemas.PBIncident]):
     # clean the results by eliminating commas and parenthesis, append to df
     df['tag_predicted'] = df['tag_predicted'].apply(lambda x: ', '.join(x))
     print(df.columns)
-    # use db to query 
-    # row by row check if exists in db
-    # check id column
 
-    #INSERT INTO incident_dim
+    # Separates the tags by category into different rows
+    df = df.explode('tag_predicted')
+    # use db to query
+
+    # INSERT INTO incident_dim
     # (incident_id, text, edit_at, date, city)
     inicident_df = df[['id', 'text', 'edit_at', 'date', 'CITY']].copy()
-    inicident_df.to_sql('incident_dim', con, if_exists='append', index=False, method='multi')
+    inicident_df.to_sql('incident_dim', con,
+                        if_exists='append', index=False, method='multi')
     print(inicident_df.columns)
-    #INSERT INTO place_dim
+    # INSERT INTO place_dim
     # (incident_id, city, state_code, state_name, county, latitude, longitude)
     # place_df = df[['id', 'city', 'state_code', 'state_name', 'county', 'latitude', 'longitude']].copy()
     # print(place_df.columns)
@@ -56,10 +58,12 @@ def read_pbincidents(pbincident: List[schemas.PBIncident]):
     # (incident_id, link)
     df['links'] = df['links'].astype(str)
     evidence_df = df[['id', 'links']].copy()
-    evidence_df.to_sql('evidence_dim', con, if_exists='append', index=False, method='multi')
+    evidence_df.to_sql('evidence_dim', con, if_exists='append',
+                       index=False, method='multi')
     print(evidence_df.columns)
-    #INSERT INTO force_tags_dim
+    # INSERT INTO force_tags_dim
     # (incident_id, force_tag)
-    force_tags_df = df[['id', 'tag_predicted']].copy()
-    force_tags_df.to_sql('force_tags_dim', con, if_exists='append', index=False, method='multi')
-    print(force_tags_df.columns)
+    tags = df[['id', 'tag_predicted']].copy()
+    tags.to_sql('tags', con,
+                if_exists='append', index=False, method='multi')
+    print(tags.columns)
