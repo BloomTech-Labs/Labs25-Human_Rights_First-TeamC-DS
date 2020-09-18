@@ -72,9 +72,7 @@ def clean_pb2020(df):
 
 def geoloc(df):
     '''
-    function that adds geolocation data
-    given city of incident
-    outputs df with lat and long columns
+    Mutates a dataframe and adds geolocation data (lat/lon columns) based on city of incident
     '''
     # Nominatim for geocoding
     locator = Nominatim(user_agent="myGeocoder")
@@ -94,3 +92,11 @@ def geoloc(df):
     df = df.drop(['altitude', 'location', 'point', 'city_state'], axis=1)
 
     return df
+
+
+df -> geoloc -> df'
+
+df
+for row in df:
+    geoloc(row[placename])
+df'
