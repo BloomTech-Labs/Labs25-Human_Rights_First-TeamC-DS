@@ -1,10 +1,10 @@
 import os
 from dotenv import load_dotenv
-load_dotenv('../.env')
+load_dotenv('./project/app/.env')
 
 dbname = os.getenv("DB_DBNAME")
 user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD")
 host = os.getenv("DB_HOST")
 
-dbconfig = dict(dbname, user, password, host)
+dbconfig = {'dbname': dbname, 'user': user, 'password': password, 'host': host}
