@@ -74,13 +74,10 @@ def geoloc(df):
     '''
     Mutates a dataframe and adds geolocation data (lat/lon columns) based on city of incident
     '''
-    # Nominatim for geocoding
     locator = Nominatim(user_agent="myGeocoder")
     # delay geocoding by 1 second between each incident to avoid rate limit
     geocode = RateLimiter(locator.geocode, min_delay_seconds=1)
-    # create column of city, state to apply geocode to
     df['city_state'] = df['CITY'].astype(str) + ',' + df['STATE_NAME']
-    # create column by applying geocode
     df['location'] = df['city_state'].apply(geocode)
     # create lat, long, altitude as a single tuple column via pulling that data from location column
     df['point'] = df['location'].apply(
@@ -92,11 +89,3 @@ def geoloc(df):
     df = df.drop(['altitude', 'location', 'point', 'city_state'], axis=1)
 
     return df
-
-
-df -> geoloc -> df'
-
-df
-for row in df:
-    geoloc(row[placename])
-df'
