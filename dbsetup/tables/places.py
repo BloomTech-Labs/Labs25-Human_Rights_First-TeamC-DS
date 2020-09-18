@@ -1,4 +1,4 @@
-table = """
+query = """
 DROP TABLE IF EXISTS places CASCADE;
 CREATE TABLE IF NOT EXISTS places (
 id SERIAL PRIMARY KEY,

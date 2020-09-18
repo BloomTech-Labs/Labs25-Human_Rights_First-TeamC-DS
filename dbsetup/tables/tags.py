@@ -1,4 +1,4 @@
-table = """
+query = """
 DROP TABLE IF EXISTS tags;
 CREATE TABLE IF NOT EXISTS tags (
 id serial PRIMARY KEY,
