@@ -1,39 +1,45 @@
 import csv
 import psycopg2
-from ..db_postgresql import cursor
+from pprint import pprint
 
 
-def seed_table():
-    with open('../training_data.csv', 'r') as f:
-        reader = csv.reader(f)
-        next(f)
-        # incidents
-        # order: id 6, text 4, edit_at 2, date 5, city 3
+def seed_table(db):
+    with open('dbsetup/training_data.csv', 'r') as f:
+        reader = csv.DictReader(f)
         data = []
+
         # gets the correct place ID in our database that matches the incident
+        places_query = """SELECT * FROM places"""
+        db.execute(places_query)
+        places = db.fetchall()
 
-        # 1. Query entire places table
-        # slap that sucker into nested dictionary
-        # lookup by statecode, and then look up by city
-        # if the incident state/city is not there,
-        # make a query to create a new place
-        # else:
-        # check if the amount of incidents is greater
+        places_keys = ['id', 'city', 'state_code',
+                       'state_name', 'latitde', 'longitude', 'counter']
+        place_id_lookup = {place[2]: {
+            place[1]: place[0]} for place in places}
 
-        # there is already a new
-
-        # 2. Query places table for each incident to check
-        # does SQL have a way to combine multiple checks into one?
-
-        # incident is ma-boston-1
-        # incident split by '-'
-
+        data = {}
+        pprint(place_id_lookup)
         for row in reader:
-            data.append([row[6], row[4], row[5]])
-        sql = """
-            INSERT INTO incidents
-            (id, text, date)
-            VALUES %s
-            """
-        psycopg2.extras.execute_values(
-            pg_curs, sql, data, template=None, page_size=10000)
+            # get the places id from placesLookUp
+            place_id = place_id_lookup[row['STATE_CODE']][row['CITY']]
+            if place_id in data:
+                data[place_id] += 1
+            else:
+                data[place_id] = 1
+        pprint(data)
+
+        # check what state, and what city
+        # create a SQL statement that adds a new incident record, with the appropriate
+        # place foreign key relationship
+
+        # lookup by statecode, and then look up by city
+        # For seeding, no need to check for new location
+
+        # sql = """
+        #     INSERT INTO incidents
+        #     (id, text, date)
+        #     VALUES %s
+        #     """
+        # psycopg2.extras.execute_values(conn, sql, data, template = None, page_size = 10000)
+        # print(data)

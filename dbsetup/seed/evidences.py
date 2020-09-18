@@ -1,4 +1,4 @@
-def seed_table:
+def seed_table(conn):
     # evidence: id, link
     with open('training_data.csv', 'r') as f:
         reader = csv.reader(f)
@@ -14,4 +14,4 @@ def seed_table:
                 VALUES %s
                 """
         psycopg2.extras.execute_values(
-            pg_curs, sql, data, template=None, page_size=10000)
+            conn, sql, data, template=None, page_size=10000)

@@ -1,10 +1,10 @@
 import csv
 import psycopg2
-from ..db_postgresql import cursor
+import psycopg2.extras
 
 
-def seed_table():
-    with open('../training_data.csv', 'r') as f:
+def seed_table(conn):
+    with open('dbsetup/training_data.csv', 'r') as f:
         reader = csv.DictReader(f)
         cache = {}
         for row in reader:
@@ -37,4 +37,4 @@ def seed_table():
             (city, state_code, state_name, latitude, longitude, counter)
             VALUES %s
             """
-        psycopg2.extras.execute_values(cursor, sql, params, page_size=10000)
+        psycopg2.extras.execute_values(conn, sql, params, page_size=10000)
