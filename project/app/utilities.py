@@ -8,6 +8,7 @@ from geopy.extra.rate_limiter import RateLimiter
 # db
 from ..database import SessionLocal, engine
 from sqlalchemy.orm import Session
+from util.constants import EVIDENCES_TABLE
 
 router = APIRouter()
 con = engine.connect()
@@ -20,14 +21,15 @@ def get_new(new_df):
     outputs df of new incidents and old incidents w/ new links column values
     '''
     # df of existing db data
-    db_df = pd.read_sql('SELECT * FROM "evidence_dim"', con)
+    db_df = pd.read_sql(f'SELECT * FROM ${EVIDENCES_TABLE}', con)
     # section of new data that MATCHES our database by id
     match = new_df[new_df['id'].isin(db_df['id'])]
     # set new df = NEW incident IDs aka incidents that were NOT in our db
     new_df = new_df[~new_df['id'].isin(db_df['id'])]
-    ## TODO: append old incidents that had new evidence links to new_df
-    
+    # TODO: append old incidents that had new evidence links to new_df
+
     return new_df
+
 
 def clean_pb2020(df):
     '''

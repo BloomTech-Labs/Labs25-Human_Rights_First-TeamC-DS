@@ -1,6 +1,6 @@
-create_evidence_table = """
-DROP TABLE IF EXISTS evidence;
-CREATE TABLE IF NOT EXISTS evidence (
+table = """
+DROP TABLE IF EXISTS evidences;
+CREATE TABLE IF NOT EXISTS evidences (
 id serial PRIMARY KEY,
 incident_id VARCHAR,
 link VARCHAR,

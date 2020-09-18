@@ -1,4 +1,4 @@
-create_incident_table = """
+table = """
 DROP TABLE IF EXISTS incidents CASCADE;
 CREATE TABLE IF NOT EXISTS incidents (
 id VARCHAR PRIMARY KEY,
