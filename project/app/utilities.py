@@ -6,10 +6,9 @@ import geopy
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
 # db
-from ..database import SessionLocal, engine
+from .database import SessionLocal, engine
 from sqlalchemy.orm import Session
 
-router = APIRouter()
 con = engine.connect()
 
 
@@ -25,9 +24,10 @@ def get_new(new_df):
     match = new_df[new_df['id'].isin(db_df['id'])]
     # set new df = NEW incident IDs aka incidents that were NOT in our db
     new_df = new_df[~new_df['id'].isin(db_df['id'])]
-    ## TODO: append old incidents that had new evidence links to new_df
-    
+    # TODO: append old incidents that had new evidence links to new_df
+
     return new_df
+
 
 def clean_pb2020(df):
     '''
