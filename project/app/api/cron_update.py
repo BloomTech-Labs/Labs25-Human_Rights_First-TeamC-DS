@@ -7,7 +7,7 @@ import pandas as pd
 
 from ..database import SessionLocal, engine, get_db
 from .. import crud, models, schemas
-from ..pb2020_cleaning import clean_pb2020, geoloc
+from ..utilities import get_new, clean_pb2020, geoloc
 
 router = APIRouter()
 # con = engine.connect()
@@ -20,7 +20,7 @@ def read_pbincidents(pbincident: List[schemas.PBIncident], db: Session = Depends
     df = pd.DataFrame.from_dict(list_incidents, orient='columns')
 
     counts = crud.get_places(db)
-    city_counts = {i[1]:{i[0]:i[2]} for i in counts}
+    city_counts = {i[1]: {i[0]: i[2]} for i in counts}
 
     allnew_idcount = []
     for i in list(df['id']):
@@ -29,12 +29,18 @@ def read_pbincidents(pbincident: List[schemas.PBIncident], db: Session = Depends
         state = id_split[0].upper()
         if int(id_split[-1]) > city_counts[state][city]:
             allnew_idcount.append(i)
-        
+
     updates_df = df[df['id'].isin(allnew_idcount)].copy()
 
     # clean functions
+    # get new incidents
+    df = get_new(df)
+
+    # clean new incidents
     df = clean_pb2020(df)
-    # df = geoloc(df)
+
+    # add locaiton metadata to incidents
+    df = geoloc(df)
 
     # this is the code for the second pickle
     # Load from file
@@ -53,16 +59,18 @@ def read_pbincidents(pbincident: List[schemas.PBIncident], db: Session = Depends
     # clean the results by eliminating commas and parenthesis, append to df
     df['tag_predicted'] = df['tag_predicted'].apply(lambda x: ', '.join(x))
     print(df.columns)
-    # use db to query 
+    # use db to query
     # row by row check if exists in db
     # check id column
 
-    #INSERT INTO incident_dim
+    # TODO chunk this into another fxn (?)
+    # INSERT INTO incident_dim
     # (incident_id, text, edit_at, date, city)
     inicident_df = df[['id', 'text', 'edit_at', 'date', 'CITY']].copy()
-    inicident_df.to_sql('incident_dim', con, if_exists='append', index=False, method='multi')
+    inicident_df.to_sql('incident_dim', con,
+                        if_exists='append', index=False, method='multi')
     print(inicident_df.columns)
-    #INSERT INTO place_dim
+    # INSERT INTO place_dim
     # (incident_id, city, state_code, state_name, county, latitude, longitude)
     # place_df = df[['id', 'city', 'state_code', 'state_name', 'county', 'latitude', 'longitude']].copy()
     # print(place_df.columns)
@@ -70,10 +78,12 @@ def read_pbincidents(pbincident: List[schemas.PBIncident], db: Session = Depends
     # (incident_id, link)
     df['links'] = df['links'].astype(str)
     evidence_df = df[['id', 'links']].copy()
-    evidence_df.to_sql('evidence_dim', con, if_exists='append', index=False, method='multi')
+    evidence_df.to_sql('evidence_dim', con, if_exists='append',
+                       index=False, method='multi')
     print(evidence_df.columns)
-    #INSERT INTO force_tags_dim
+    # INSERT INTO force_tags_dim
     # (incident_id, force_tag)
     force_tags_df = df[['id', 'tag_predicted']].copy()
-    force_tags_df.to_sql('force_tags_dim', con, if_exists='append', index=False, method='multi')
+    force_tags_df.to_sql('force_tags_dim', con,
+                         if_exists='append', index=False, method='multi')
     print(force_tags_df.columns)
