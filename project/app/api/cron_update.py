@@ -10,7 +10,7 @@ from .. import crud, models, schemas
 from ..utilities import get_new, clean_pb2020, geoloc
 
 router = APIRouter()
-# con = engine.connect()
+con = engine.connect()
 
 
 @router.post('/cron_update/')
@@ -29,8 +29,6 @@ def read_pbincidents(pbincident: List[schemas.PBIncident], db: Session = Depends
         state = id_split[0].upper()
         if int(id_split[-1]) > city_counts[state][city]:
             allnew_idcount.append(i)
-
-    updates_df = df[df['id'].isin(allnew_idcount)].copy()
 
     # clean functions
     # get new incidents
@@ -59,6 +57,9 @@ def read_pbincidents(pbincident: List[schemas.PBIncident], db: Session = Depends
     # clean the results by eliminating commas and parenthesis, append to df
     df['tag_predicted'] = df['tag_predicted'].apply(lambda x: ', '.join(x))
     print(df.columns)
+
+    # Separates the tags by category into different rows
+    df = df.explode('tag_predicted')
     # use db to query
     # row by row check if exists in db
     # check id column
@@ -81,9 +82,9 @@ def read_pbincidents(pbincident: List[schemas.PBIncident], db: Session = Depends
     evidence_df.to_sql('evidence_dim', con, if_exists='append',
                        index=False, method='multi')
     print(evidence_df.columns)
+
     # INSERT INTO force_tags_dim
     # (incident_id, force_tag)
-    force_tags_df = df[['id', 'tag_predicted']].copy()
-    force_tags_df.to_sql('force_tags_dim', con,
-                         if_exists='append', index=False, method='multi')
-    print(force_tags_df.columns)
+    tags = df[['id', 'tag_predicted']].copy()
+    tags.to_sql('tags', con, if_exists='append', index=False, method='multi')
+    print(tags.columns)
