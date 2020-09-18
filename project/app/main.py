@@ -9,7 +9,7 @@ import uvicorn
 import pandas as pd
 
 from app.api import cron_update, predict, viz
-from .database import SessionLocal, engine
+from .database import SessionLocal, engine, get_db
 from . import crud, models, schemas
 
 tfidf_vectorizer = TfidfVectorizer(max_df=0.8, max_features=10000)
@@ -17,13 +17,6 @@ tfidf_vectorizer = TfidfVectorizer(max_df=0.8, max_features=10000)
 multilabel_binarizer = MultiLabelBinarizer()
 
 models.Base.metadata.create_all(bind=engine)
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 app = FastAPI(
