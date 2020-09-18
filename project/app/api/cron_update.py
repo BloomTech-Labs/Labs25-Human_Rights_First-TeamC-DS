@@ -7,7 +7,7 @@ import pandas as pd
 
 from ..database import SessionLocal, engine
 from .. import crud, models, schemas
-from ..pb2020_cleaning import clean_pb2020, geoloc
+from ..utilities import get_new, clean_pb2020, geoloc
 
 router = APIRouter()
 con = engine.connect()
@@ -18,9 +18,15 @@ def read_pbincidents(pbincident: List[schemas.PBIncident]):
     # list incidents into dicts to create dataframe
     list_incidents = [i.dict() for i in pbincident]
     df = pd.DataFrame.from_dict(list_incidents, orient='columns')
-    # clean functions
+
+    # get new incidents
+    df = get_new(df)
+
+    # clean new incidents
     df = clean_pb2020(df)
-    # df = geoloc(df)
+
+    # add locaiton metadata to incidents
+    df = geoloc(df)
 
     # this is the code for the second pickle
     # Load from file
@@ -44,6 +50,7 @@ def read_pbincidents(pbincident: List[schemas.PBIncident]):
     df = df.explode('tag_predicted')
     # use db to query
 
+    # TODO chunk this into another fxn (?)
     # INSERT INTO incident_dim
     # (incident_id, text, edit_at, date, city)
     inicident_df = df[['id', 'text', 'edit_at', 'date', 'CITY']].copy()

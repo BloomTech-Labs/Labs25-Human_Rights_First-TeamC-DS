@@ -24,7 +24,6 @@ id SERIAL PRIMARY KEY,
 city VARCHAR,
 state_code CHAR(2),
 state_name VARCHAR(30),
-county VARCHAR(30),
 latitude DECIMAL(9,6),
 longitude DECIMAL(9,6),
 counter INT
@@ -101,7 +100,6 @@ with open('training_data.csv', 'r') as f:
                 'cityName': row['CITY'],
                 'stateName': row['STATE_NAME'],
                 'stateCode': row['STATE_CODE'],
-                'county': row['COUNTY'],
                 'lat': row['LATITUDE'],
                 'lon': row['LONGITUDE'],
                 'counter': 1
@@ -113,21 +111,20 @@ with open('training_data.csv', 'r') as f:
             cache[place]['cityName'],
             cache[place]['stateCode'],
             cache[place]['stateName'],
-            cache[place]['county'],
             cache[place]['lat'],
             cache[place]['lon'],
             cache[place]['counter']])
 
     sql = """
         INSERT INTO places
-        (city, state_code, state_name, county, latitude, longitude, counter)
+        (city, state_code, state_name, latitude, longitude, counter)
         VALUES %s
         """
     psycopg2.extras.execute_values(
         pg_curs, sql, params, page_size=10000)
 
 # function that inserts data into tables from training data csv
-with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
+with open('training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
     # incidents
@@ -145,7 +142,7 @@ with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data
 
 
 # evidence: id, link
-with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
+with open('training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
     # order: id 6, link 13
@@ -163,7 +160,7 @@ with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data
 
 
 # tags table
-with open('/Users/michelle/Labs25-Human_Rights_First-TeamC-DS/Data/training_data.csv', 'r') as f:
+with open('training_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(f)  # skipping the header row
     # order: id 6, tag 12
