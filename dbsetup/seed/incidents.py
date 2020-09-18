@@ -20,6 +20,7 @@ def seed_table(db):
 
         data = {}
         pprint(place_id_lookup)
+        # TODO FIX HASH TABLE COLLSIONS
         for row in reader:
             # get the places id from placesLookUp
             place_id = place_id_lookup[row['STATE_CODE']][row['CITY']]
