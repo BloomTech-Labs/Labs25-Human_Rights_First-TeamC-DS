@@ -43,11 +43,14 @@ def clean_pb2020(df):
     # drop redundant date column
     df = df.drop('date_text', axis=1)
     # change substandard city and state names
-    df['CITY'] = df['CITY'].str.replace(
-        'New York City', 'New York', case=False)
     df['CITY'] = df['CITY'].str.replace('DC', 'Washington', case=True)
     df['STATE_NAME'] = df['STATE_NAME'].str.replace(
         'Washington DC', 'District of Columbia', case=False)
+    df['CITY'] = df['CITY'].str.replace('Hungtington Beach', 'Huntington Beach', case=True)
+    # fix id to match city name
+    df['id'] = df['id'].replace({'-dc': '-Washington'}, regex=True)
+    df['id'] = df['id'].replace({'-hungtingonbeach': '-huntingtonbeach'}, regex=True)
+    df['id'] = df['id'].replace({'-costa-mesa': '-costamesa'}, regex=True
     # drop NaNs
     df.dropna(subset=['CITY', 'date'], inplace=True)
     # put date column in datetime
@@ -65,6 +68,7 @@ def clean_pb2020(df):
     # remove backslash and apostrophe
     df['text'] = df['text'].str.replace(r'\'', r'')
     # remove anything that isn't in a-z
+    df['CITY'] = df['CITY'].str.replace(r'[^a-zA-Z]', r' ')
     df['text'] = df['text'].str.replace(r'[^a-zA-Z]', r' ')
 
     return df
