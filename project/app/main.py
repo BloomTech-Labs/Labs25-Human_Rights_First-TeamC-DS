@@ -44,7 +44,6 @@ def incidents_by_tag(tag: str, db: Session = Depends(get_db)):
 
 
 app.include_router(cron_update.router)
-app.include_router(predict.router)
 app.include_router(viz.router)
 
 app.add_middleware(
