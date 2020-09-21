@@ -7,9 +7,8 @@ from .database import Base
 class Incidents(Base):
     __tablename__ = 'incidents'
     id = Column(String, primary_key=True)
-    place_id = Column(String)
-    edit_at = Column(String)
-    text = Column(String)
+    place_id = Column(Integer)
+    descr = Column(String)
     date = Column(String)
 
 
@@ -26,7 +25,6 @@ class Place(Base):
     city = Column(String)
     state_code = Column(String)
     state_name = Column(String)
-    county = Column(String)
     latitude = Column(String)
     longitude = Column(String)
     counter = Column(Integer)
