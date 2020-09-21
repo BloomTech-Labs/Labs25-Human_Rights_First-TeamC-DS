@@ -3,8 +3,13 @@ import pandas as pd
 
 from pydantic import BaseModel
 
+class Tags(BaseModel):
+    id: int
+    incident_id: str
+    tag: str
+
 class EvidenceBase(BaseModel):
-    link_string: str
+    link: str
 
 class Evidence(EvidenceBase):
     id: int
@@ -35,6 +40,7 @@ class Incidents(IncidentsBase):
     id: int
     evidences: List[Evidence] = []
     place: List[Place] = []
+    tags: List[Tags] = []
     
     class Config:
         orm_mode = True
