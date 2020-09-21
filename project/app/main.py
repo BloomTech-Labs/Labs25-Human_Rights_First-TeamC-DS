@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 import uvicorn
 import pandas as pd
 
-from app.api import cron_update, predict, viz
+from app.api import cron_update, predict, viz, incidents
 from .database import SessionLocal, engine, get_db
 from . import crud, models, schemas
 
@@ -27,22 +27,7 @@ app = FastAPI(
 )
 
 
-@app.get("/incidents/", response_model=List[schemas.Incidents])
-def read_incidents(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    incidents = crud.get_incidents(db, skip=skip, limit=limit)
-    return incidents
-
-@app.get("/incidents/{tag}", response_model=List[schemas.Incidents])
-def incidents_by_tag(tag: str, db: Session = Depends(get_db)):
-    # query 'tags' table filter by tags.tag == tag
-    list_of_ids = db.query(models.Tags.incident_id).filter(models.Tags.tag == tag.capitalize()).all()
-    tag_incidents = []
-    for incident_id in list_of_ids:
-        incident = crud.get_incident(db,incident_id)
-        tag_incidents.append(incident)
-    return tag_incidents
-
-
+app.include_router(incidents.router)
 app.include_router(cron_update.router)
 app.include_router(viz.router)
 
