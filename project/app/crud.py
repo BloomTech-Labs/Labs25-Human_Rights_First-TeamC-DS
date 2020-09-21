@@ -14,7 +14,7 @@ def create_incident(db: Session,  incident: schemas.Incidents):
     return db_incident
 
 def get_incident(db: Session, incident_id: str):
-    return db.query(models.Incidents).filter(models.Incidents.incident_id == incident_id).first()
+    return db.query(models.Incidents).filter(models.Incidents.id == incident_id).first()
 
 def get_incidents(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Incidents).offset(skip).limit(limit).all()
