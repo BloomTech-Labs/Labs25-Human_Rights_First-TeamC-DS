@@ -49,7 +49,7 @@ def clean_pb2020(df):
     df['CITY'] = df['CITY'].str.replace('Hungtington Beach', 'Huntington Beach', case=True)
     # fix id to match city name
     df['id'] = df['id'].replace({'-dc': '-Washington'}, regex=True)
-    df['id'] = df['id'].replace({'-hungtingonbeach': '-huntingtonbeach'}, regex=True)
+    df['id'] = df['id'].replace({'-hungtingtonbeach': '-huntingtonbeach'}, regex=True)
     df['id'] = df['id'].replace({'-costa-mesa': '-costamesa'}, regex=True
     # drop NaNs
     df.dropna(subset=['CITY', 'date'], inplace=True)
