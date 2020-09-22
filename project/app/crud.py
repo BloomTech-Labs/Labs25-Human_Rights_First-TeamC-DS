@@ -14,7 +14,7 @@ def create_incident(db: Session,  incident: schemas.Incidents):
     return db_incident
 
 def get_incident(db: Session, incident_id: str):
-    return db.query(models.Incidents).filter(models.Incidents.incident_id == incident_id).first()
+    return db.query(models.Incidents).filter(models.Incidents.id == incident_id).first()
 
 def get_incidents(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Incidents).offset(skip).limit(limit).all()
@@ -29,8 +29,8 @@ def create_incident_evidence(db: Session, evidence: schemas.Evidence, incident_i
 def get_evidences(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Evidences).offset(skip).limit(limit).all()
 
-def create_place_incident(db: Session, place: schemas.Place, incident_id: str):
-    db_place = models.Place(**place.dict(), incident_id=incident_id)
+def create_place_incident(db: Session, places: schemas.Places, incident_id: str):
+    db_place = models.Places(**places.dict(), incident_id=incident_id)
     db.add(db_place)
     db.commit()
     db.refresh(db_place)
