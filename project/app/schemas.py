@@ -9,6 +9,7 @@ class Tags(BaseModel):
     tag: str
 
 class EvidenceBase(BaseModel):
+    incident_id: str
     link: str
 
 class Evidence(EvidenceBase):
@@ -32,12 +33,11 @@ class Place(PlaceBase):
         orm_mode = True
 
 class IncidentsBase(BaseModel):
-    incident_id: str
-    incident_description: str
-    time_id: str
+    id: str
+    descr: str
+    date: str
 
 class Incidents(IncidentsBase):
-    id: int
     evidences: List[Evidence] = []
     place: List[Place] = []
     tags: List[Tags] = []
