@@ -32,8 +32,8 @@ def read_pbincidents(pbincident: List[schemas.PBIncident], db: Session = Depends
 
     # clean functions
     # clean all incidents
-    df = clean_pb2020(df)    
-    
+    df = clean_pb2020(df)
+
     # get new incidents
     df = get_new(df)
 
