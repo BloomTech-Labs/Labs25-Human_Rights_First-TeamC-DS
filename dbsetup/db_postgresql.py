@@ -8,7 +8,7 @@ cursor = psycopg2.connect(**dbconfig).cursor()
 # cursor.execute(placesTable.query)
 # cursor.execute(incidentsTable.query)
 # cursor.execute(evidencesTable.query)
-cursor.execute(tagsTable.query)
+# cursor.execute(tagsTable.query)
 
 # places.seed_table(cursor)
 # incidents.seed_table(cursor)
