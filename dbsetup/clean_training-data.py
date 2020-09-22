@@ -23,7 +23,6 @@ def clean_pb2020(df):
         {'-hungtingtonbeach': '-huntingtonbeach'}, regex=True)
     df['id'] = df['id'].replace({'-costa-mesa': '-costamesa'}, regex=True)
     df['id'] = df['id'].replace({'-newyorkcity': '-newyork'}, regex=True)
-    df['id'] = df['id'].replace({'-hollywood': '-losangeles'}, regex=True)
     # drop NaNs
     df.dropna(subset=['CITY', 'date'], inplace=True)
     # put date column in datetime

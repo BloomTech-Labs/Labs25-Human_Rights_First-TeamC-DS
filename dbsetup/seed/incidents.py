@@ -44,11 +44,11 @@ def seed_table(db):
 
         # lookup by statecode, and then look up by city
 
-        # sql = """
-        #     INSERT INTO incidents
-        #     (id, place_id, descr, date)
-        #     VALUES %s
-        #     """
-        # psycopg2.extras.execute_values(
-        #     conn, sql, data, template=None, page_size=10000)
-        # print(data)
+        sql = """
+            INSERT INTO incidents
+            (id, place_id, descr, date)
+            VALUES %s
+            """
+        psycopg2.extras.execute_values(
+            db, sql, data, template=None, page_size=10000)
+        print(data)
