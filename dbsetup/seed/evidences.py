@@ -1,6 +1,6 @@
 def seed_table(conn):
     # evidence: id, link
-    with open('training_data.csv', 'r') as f:
+    with open('dbsetup/training_data2.csv', 'r') as f:
         reader = csv.reader(f)
         next(f)  # skipping the header row
         # order: id 6, link 13

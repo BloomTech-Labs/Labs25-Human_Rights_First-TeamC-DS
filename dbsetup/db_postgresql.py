@@ -11,8 +11,8 @@ cursor = psycopg2.connect(**dbconfig).cursor()
 # cursor.execute(tagsTable.query)
 
 # places.seed_table(cursor)
-# incidents.seed_table(cursor)
-tags.seed_table(cursor)
+incidents.seed_table(cursor)
+# tags.seed_table(cursor)
 
 cursor.execute("COMMIT")
 # pg_curs.fetchall()

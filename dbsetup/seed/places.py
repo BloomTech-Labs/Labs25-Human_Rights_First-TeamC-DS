@@ -4,7 +4,7 @@ import psycopg2.extras
 
 
 def seed_table(conn):
-    with open('dbsetup/training_data.csv', 'r') as f:
+    with open('dbsetup/training_data2.csv', 'r') as f:
         reader = csv.DictReader(f)
         cache = {}
         for row in reader:
