@@ -9,6 +9,7 @@ verify_ssl = true
 psycopg2 = "*"
 dotenv = "*"
 python-dotenv = "*"
+pandas = "*"
 
 [requires]
 python_version = "3"
