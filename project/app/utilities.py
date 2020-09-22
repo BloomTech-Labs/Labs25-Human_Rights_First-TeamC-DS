@@ -6,11 +6,10 @@ import geopy
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
 # db
-from ..database import SessionLocal, engine
+from .database import SessionLocal, engine
 from sqlalchemy.orm import Session
-from util.constants import EVIDENCES_TABLE
+from .util.constants import EVIDENCES_TABLE
 
-router = APIRouter()
 con = engine.connect()
 
 
