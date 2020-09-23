@@ -13,7 +13,7 @@ class Incidents(Base):
 
     evidences = relationship('Evidences', foreign_keys='Evidences.incident_id')
     tags = relationship('Tags', primaryjoin="Incidents.id==Tags.incident_id")
-    # places = relationship('Places', uselist=False, back_populates='incidents')
+    place = relationship('Places')
 
 class Evidences(Base):
     __tablename__ = 'evidences'
@@ -31,7 +31,7 @@ class Places(Base):
     latitude = Column(String)
     longitude = Column(String)
     counter = Column(Integer)
-    # incidents = relationship("Incidents", back_populates="place_id")
+    incidents = relationship("Incidents", back_populates="place")
 
 class Tags(Base):
     __tablename__ = 'tags'
