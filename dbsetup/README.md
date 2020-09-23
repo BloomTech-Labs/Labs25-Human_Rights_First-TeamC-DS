@@ -3,17 +3,18 @@
 This is the directory to setup the initial DB and seed it with the training data in the provided csv.
 
 ## TODO
-
-1. What is the edited_at column in incidents table?
-2. New evidence table.
-3. What is the `spatial_ref_sys` table?
-4. Delete `evidence_dim`, `evidence` and stick with `evidences`
-5. Populate the entries in `tags_ref` into `tags`.
-6. Make sure `incidents` correctly references to places during seeding.
+- [ ] Make sure `incidents` correctly references to places during seeding.
+- [x] ~~What is the edited_at column in incidents table?~~
+- [x] What is the `spatial_ref_sys` table? (Delete it)
+- [x] ~~Delete `evidence_dim`, `evidence` and stick with `evidences`.~~
+- [ ] Populate the entries in `tags_ref` into `tags`. 
+- [ ] Delete `tags_ref` and `tags_junction`
+- [ ] Delete `place` and `incident_dim` tables
+- [ ] Remove pprint imports from files?
 
 ## Incident ma-springfield-42 @ Springfield, MA
 
-Query entire places table and put into dictionary and check if Springfield is already.
+Query entire places table, put it into a dictionary, and check if Springfield is in it.
 
 If springfield:
 check if incident id is greater than incident count
