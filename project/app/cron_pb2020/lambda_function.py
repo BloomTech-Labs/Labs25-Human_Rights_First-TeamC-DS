@@ -13,6 +13,7 @@ def lambda_handler(event=None, context=None):
 
     data = alldata['data']
 
+    # cron_update_url = 'http://human-rights-considered.eba-api7kmju.us-east-1.elasticbeanstalk.com/cron_update/'
     cron_update_url = 'http://localhost:8000/cron_update/'
 
     jsondata = json.dumps(data)
