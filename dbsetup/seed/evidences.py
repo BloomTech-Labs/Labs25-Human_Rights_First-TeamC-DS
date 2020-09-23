@@ -1,6 +1,6 @@
 import csv
 import psycopg2
-from pprint import pprint
+
 
 def seed_table(conn):
     # evidence: id, link

@@ -1,28 +1,15 @@
-# DB Migration
+# Database
 
-This is the directory to setup the initial DB and seed it with the training data in the provided csv.
+Data on police use of force for HRF is stored in relational tables managed with PostgreSQL. 
 
-## TODO
-- [ ] Make sure `incidents` correctly references to places during seeding.
-- [x] ~~What is the edited_at column in incidents table?~~
-- [x] What is the `spatial_ref_sys` table? (Delete it)
-- [x] ~~Delete `evidence_dim`, `evidence` and stick with `evidences`.~~
-- [ ] Populate the entries in `tags_ref` into `tags`. 
-- [ ] Delete `tags_ref` and `tags_junction`
-- [ ] Delete `place` and `incident_dim` tables
-- [ ] Remove pprint imports from files?
+This directory contains scripts used for the setup and seeding of the database. The database was initially populated with the incidents in the provided `training_data` csv. Tables are defined in the tables subfolder, seed scrips are found in the seed subfolder, and setup is completed when running `db_postgresql.py`. 
 
-## Incident ma-springfield-42 @ Springfield, MA
 
-Query entire places table, put it into a dictionary, and check if Springfield is in it.
+## Prerequisites
 
-If springfield:
-check if incident id is greater than incident count
-else:
-create springfield record in places table
+First, install **PostgreSQL** from [the following page.](https://www.postgresql.org/download/)
 
-add incident
+Second, to install python dependencies, run:
 
-Check evidence
+``` pip install psycopg2 ```  
 
-- Query entire incidents table, and check evidence counts at each one

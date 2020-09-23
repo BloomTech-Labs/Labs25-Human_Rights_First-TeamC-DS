@@ -1,6 +1,5 @@
 import csv
 import psycopg2
-from pprint import pprint
 
 
 def seed_table(db):
@@ -36,7 +35,7 @@ def seed_table(db):
             place_id = place_id_lookup[state][city]
             data.append([row['id'], place_id, row['text'], row['date']])
 
-        pprint(data)
+        print(data)
 
         # check what state, and what city
         # create a SQL statement that adds a new incident record, with the appropriate

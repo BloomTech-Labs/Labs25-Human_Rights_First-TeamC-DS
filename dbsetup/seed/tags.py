@@ -1,7 +1,7 @@
 # tags table
 import csv
-from pprint import pprint
 import psycopg2
+
 
 def seed_table(pg_curs):
     with open('dbsetup/training_data.csv', 'r') as f:
