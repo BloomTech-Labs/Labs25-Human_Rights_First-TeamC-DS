@@ -24,7 +24,7 @@ class Evidence(EvidenceBase):
 
 class PlacesBase(BaseModel):
     city: str
-    state: str
+    state_name: str
     state_code: str
     latitude: str
     longitude: str
@@ -44,6 +44,7 @@ class IncidentsBase(BaseModel):
 class Incidents(IncidentsBase):
     evidences: List[Evidence] = []
     tags: List[Tags] = []
+    place: Places
     
     class Config:
         orm_mode = True
