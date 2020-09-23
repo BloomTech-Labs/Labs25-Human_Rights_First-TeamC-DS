@@ -12,7 +12,7 @@ class Incidents(Base):
     date = Column(String)
 
     evidences = relationship('Evidences', foreign_keys='Evidences.incident_id')
-    tags = relationship('Tags', foreign_keys='Tags.incident_id')
+    tags = relationship('Tags', primaryjoin="Incidents.id==Tags.incident_id")
     # places = relationship('Places', uselist=False, back_populates='incidents')
 
 class Evidences(Base):
