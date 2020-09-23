@@ -31,13 +31,13 @@ def read_pbincidents(pbincident: List[schemas.PBIncident], db: Session = Depends
             allnew_idcount.append(i)
 
     # clean functions
+    # clean all incidents
+    df = clean_pb2020(df)
+
     # get new incidents
     df = get_new(df)
 
-    # clean new incidents
-    df = clean_pb2020(df)
-
-    # add locaiton metadata to incidents
+    # add location metadata to incidents
     df = geoloc(df)
 
     # this is the code for the second pickle
