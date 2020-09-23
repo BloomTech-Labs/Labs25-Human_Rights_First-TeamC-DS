@@ -1,10 +1,10 @@
 # tags table
 import csv
-from pprint import pprint
 import psycopg2
 
+
 def seed_table(pg_curs):
-    with open('dbsetup/training_data2.csv', 'r') as f:
+    with open('dbsetup/training_data.csv', 'r') as f:
         reader = csv.DictReader(f)
         # order: id 6, tag 12
         data = []

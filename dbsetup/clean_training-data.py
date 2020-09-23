@@ -37,8 +37,6 @@ def clean_pb2020(df):
     # put description column into str and convert text to lowercase
     df['text'] = df['text'].astype(str).str.lower()
     # regex for nlp:
-    # remove backslash and apostrophe
-    df['text'] = df['text'].str.replace(r'\'', r'')
     # remove anything that isn't in a-z
     df['CITY'] = df['CITY'].str.replace(r'[^a-zA-Z]', r' ')
     df['text'] = df['text'].str.replace(r'[^a-zA-Z]', r' ')
@@ -50,4 +48,4 @@ df = pd.read_csv('dbsetup/training_data.csv')
 
 df = clean_pb2020(df)
 
-df.to_csv('dbsetup/training_data2.csv')
+df.to_csv('dbsetup/training_data.csv')

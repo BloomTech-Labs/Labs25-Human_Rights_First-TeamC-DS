@@ -1,10 +1,9 @@
 import csv
 import psycopg2
-from pprint import pprint
 
 
 def seed_table(db):
-    with open('dbsetup/training_data2.csv', 'r') as f:
+    with open('dbsetup/training_data.csv', 'r') as f:
         reader = csv.DictReader(f)
         data = []
 
@@ -36,7 +35,7 @@ def seed_table(db):
             place_id = place_id_lookup[state][city]
             data.append([row['id'], place_id, row['text'], row['date']])
 
-        pprint(data)
+        print(data)
 
         # check what state, and what city
         # create a SQL statement that adds a new incident record, with the appropriate
