@@ -51,7 +51,7 @@ This project's front end repository can be found [here](https://github.com/Lambd
 ## Overview
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Lambda-School-Labs/Labs25-Human_Rights_First-TeamC-DS/main/DS_Strcuture.png" width = "500">
+<img src="https://raw.githubusercontent.com/Lambda-School-Labs/Labs25-Human_Rights_First-TeamC-DS/main/DS_Structure.png" width = "800">
 </p>
 
 
@@ -70,7 +70,7 @@ For more information on our data cleaning process, how we used Snorkel, and our 
 ### Database Schema
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Lambda-School-Labs/Labs25-Human_Rights_First-TeamC-DS/main/dbssetup/DB_Schema.png" width = "350">
+<img src="https://raw.githubusercontent.com/Lambda-School-Labs/Labs25-Human_Rights_First-TeamC-DS/main/dbsetup/DB_Schema.png" width = "650">
 </p>
 
 For information, see our [database readme](./dbsetup/README.md).
