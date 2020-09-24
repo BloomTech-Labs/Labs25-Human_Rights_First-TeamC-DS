@@ -1,16 +1,13 @@
 # Human Rights Considered - Data Science Backend
-
-
 <p align="center">
 <img src="https://raw.githubusercontent.com/Lambda-School-Labs/Labs25-Human_Rights_First-TeamC-FE/main/src/assets/HRC.png" width = "500">
 </p>
-
 
 ## [Human Rights First](https://www.humanrightsfirst.org/)
 
 > Human Rights First is a 501(c)(3) international independent advocacy and action organization that challenges America to live up to its ideals. We believe American leadership is essential in the global struggle for human rights, so we press the U.S. government and private companies to respect human rights and the rule of law. When they fail, we step in to demand reform, accountability and justice. Around the world, we work where we can best harness American influence to secure core freedoms.
 
-Our initial goal was to develop a visualization that showcases instances of police use of force along with a data science model that helps classify possible instances of brutality. We quickly realized that our highest-priority data science task -in addition to creating a model to assess use of force- was to source and process the relevant data, create a database, and to host it in an accessible API. 
+Human Rights Considered is a project working to track incidents of police use of force on Americans for Human Rights First. Our initial goal was to develop a visualization that showcases instances of police use of force along with a data science model that helps classify possible instances of brutality. We quickly realized that our highest-priority data science task -in addition to creating a model to assess use of force- was to source and process the relevant data, create a database, and to host it in an accessible API. 
 
 **Disclaimer: This application is currently in Alpha (as of Sep 20, 2020) and is not ready for production. Please use at your own risk.**
 
@@ -54,7 +51,7 @@ This project's front end repository can be found [here](https://github.com/Lambd
 ## Overview
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Lambda-School-Labs/Labs25-Human_Rights_First-TeamC-DS/main.DS_Strcuture.png" width = "600">
+<img src="https://raw.githubusercontent.com/Lambda-School-Labs/Labs25-Human_Rights_First-TeamC-DS/main/DS_Strcuture.png" width = "500">
 </p>
 
 
@@ -69,7 +66,6 @@ Incident data was cleaned, and location metadata was added to each incident with
 In order to create a model which predicts which type of force was deployed, we first created a training dataset using a new method of weakly supervised learning with Snorkel. 
 
 For more information on our data cleaning process, how we used Snorkel, and our model, see our [machine learning readme](./notebooks/README.md).
-<!--- TODO write notebook repo readme with explanations of ML and data cleaning process --->
 
 ### Database Schema
 
@@ -78,7 +74,6 @@ For more information on our data cleaning process, how we used Snorkel, and our 
 </p>
 
 For information, see our [database readme](./dbsetup/README.md).
-
 
 ### API Endpoints
 ![link](http://human-rights-considered.eba-api7kmju.us-east-1.elasticbeanstalk.com/)
@@ -89,7 +84,7 @@ For more information, see our [app readme](./project/README.md).
 ### Route: `/incidents`
 #### Method: `GET`
 #### Description: 
-Read incidents of police use of force. Incidents can be identified by their unique id, eg: `ca-sanfrancisco-1`. 
+Read all incidents of police use of force. Incidents can be identified by their unique id, eg: `ca-sanfrancisco-1`. 
 #### Schema:
 ```
 [
@@ -127,11 +122,20 @@ Read incidents of police use of force. Incidents can be identified by their uniq
 ### Route: `/incidents/{tag}`
 #### Method: `GET`
 #### Description: 
-Read incidents by tag
+Read incidents by tag. For example: `/incidents/projectiles`
+
+Sortable Tags:
+- Blunt Impact
+- Chemical
+- EHC Soft Technique
+- EHC Hard Technique
+- Projectiles
 #### Schema:
 ```
 see /incidents endpoint above
 ```
+
+
 
 ### Route: `/cron_update`
 #### Method: `POST`
@@ -142,3 +146,4 @@ Endpoint for the cron job which updates the database with new incidents and evid
 WIP
 ```
 
+See the [cron readme](./project/app/cron_pb2020/README.md). 
