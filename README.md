@@ -77,7 +77,7 @@ For information, see our [database readme](./dbsetup/README.md).
 
 ### API Endpoints
 
-![**link**](http://human-rights-considered.eba-api7kmju.us-east-1.elasticbeanstalk.com/)
+[Endpoints](http://human-rights-considered.eba-api7kmju.us-east-1.elasticbeanstalk.com/)
 
 #### Route: `/incidents`
 ##### Method: `GET`
