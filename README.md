@@ -1,6 +1,6 @@
 # Human Rights Considered - Data Science Backend
 <p align="center">
-<img src="https://raw.githubusercontent.com/Lambda-School-Labs/Labs25-Human_Rights_First-TeamC-FE/main/src/assets/HRC.png" width = "500">
+<img src="https://raw.githubusercontent.com/Lambda-School-Labs/Labs25-Human_Rights_First-TeamC-FE/main/src/assets/HRC.png" width = "475">
 </p>
 
 ## [Human Rights First](https://www.humanrightsfirst.org/)
@@ -76,16 +76,14 @@ For more information on our data cleaning process, how we used Snorkel, and our 
 For information, see our [database readme](./dbsetup/README.md).
 
 ### API Endpoints
-![link](http://human-rights-considered.eba-api7kmju.us-east-1.elasticbeanstalk.com/)
 
-For more information, see our [app readme](./project/README.md).
-<!--- TODO write data engineering repo readme, with link to cron job README  --->
+![**link**](http://human-rights-considered.eba-api7kmju.us-east-1.elasticbeanstalk.com/)
 
-### Route: `/incidents`
-#### Method: `GET`
-#### Description: 
+#### Route: `/incidents`
+##### Method: `GET`
+##### Description: 
 Read all incidents of police use of force. Incidents can be identified by their unique id, eg: `ca-sanfrancisco-1`. 
-#### Schema:
+##### Schema:
 ```
 [
   {
@@ -119,9 +117,9 @@ Read all incidents of police use of force. Incidents can be identified by their 
 ]
 ```
 
-### Route: `/incidents/{tag}`
-#### Method: `GET`
-#### Description: 
+#### Route: `/incidents/{tag}`
+##### Method: `GET`
+##### Description: 
 Read incidents by tag. For example: `/incidents/projectiles`
 
 Sortable Tags:
@@ -135,13 +133,11 @@ Sortable Tags:
 see /incidents endpoint above
 ```
 
-
-
-### Route: `/cron_update`
-#### Method: `POST`
-#### Description: 
+#### Route: `/cron_update`
+##### Method: `POST`
+##### Description: 
 Endpoint for the cron job which updates the database with new incidents and evidence from PB2020. 
-#### Schema:
+##### Schema:
 ```
 WIP
 ```
