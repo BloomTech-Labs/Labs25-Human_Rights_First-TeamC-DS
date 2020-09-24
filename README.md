@@ -1,10 +1,13 @@
-## Human Rights Considered - Data Science Backend
+# Human Rights Considered - Data Science Backend
+
+WIP - see raw for comments
 
 <!--- are we going to change the name of this repo? will future teams get added to this or make a copy and work on that? how will it look going forward --->
 
 
 ## Overview
 
+<!--- how to align center? --->
 <img src="https://raw.githubusercontent.com/Lambda-School-Labs/Labs25-Human_Rights_First-TeamC-FE/main/src/assets/HRC.png" width = "500">
 
 HRF schpeel
@@ -13,6 +16,7 @@ HRF schpeel
 
 ## DS Contributors
 
+<!--- add images? --->
 |Axel Corro|Michelle Hottinger|Miriam Ali|      
 | :-----------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: |
 |                      [<img src="" width = "200" />](https://github.com/axefx)                       |                      [<img src="" width = "200" />](https://github.com/michhottinger)                       |                      [<img src="" width = "200" />](https://https://github.com/maiali13/)                       |   
@@ -67,7 +71,7 @@ For more information on our data cleaning process and the NER model, see our [ma
 For more information, see our [app readme](./project/README.md).
 <!--- TODO write data engineering repo readme, with link to cron job README  --->
 
-### Route: /incidents
+### Route: `/incidents`
 #### Method: `GET`
 #### Description: 
 Read incidents
@@ -105,7 +109,7 @@ Read incidents
 ]
 ```
 
-### Route: /incidents/{tag}
+### Route: `/incidents/{tag}`
 #### Method: `GET`
 #### Description: 
 Read incidents by tag
@@ -114,7 +118,7 @@ Read incidents by tag
 see /incidents endpoint above
 ```
 
-### Route: /cron_update
+### Route: `/cron_update`
 #### Method: `POST`
 #### Description: 
 Endpoint for the cron job which updates the database with new incidents and evidence from PB2020. 
