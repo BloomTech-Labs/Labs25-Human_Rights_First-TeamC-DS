@@ -143,3 +143,7 @@ WIP
 ```
 
 See the [cron readme](./project/app/cron_pb2020/README.md). 
+
+
+
+<!---presentation our DS team did here: https://lambdaschool.enterprise.slack.com/files/W012QNQPVJQ/F01AUPDAWVD/zoom_2.mp4--->
