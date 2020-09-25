@@ -10,4 +10,4 @@ Our training data is from [Police Brutality 2020](https://github.com/2020PB/poli
 
 ## Database Schema
 
-<img src="https://raw.githubusercontent.com/Lambda-School-Labs/Labs25-Human_Rights_First-TeamC-DS/main/dbssetup/DB_Schema.png" width = "500">
+<img src="https://raw.githubusercontent.com/Lambda-School-Labs/Labs25-Human_Rights_First-TeamC-DS/main/dbsetup/DB_Schema.png" width = "500">
